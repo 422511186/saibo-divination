@@ -406,3 +406,4 @@ const goHome = () => {
   background: rgba(0, 240, 255, 0.1);
   box-shadow: 0 5px 20px rgba(0, 240, 255, 0.5);
 }
+</style>
