@@ -237,7 +237,12 @@ const getResultIcon = () => {
 
 const getYaoPosition = (index: number) => {
   const positions = ['初九', '九二', '九三', '九四', '九五', '上九']
-  return positions[index] || `第${index + 1}爻`
+  // 确保index在有效范围内，防止显示第七爻
+  if (index >= 0 && index < positions.length) {
+    return positions[index]
+  }
+  // 如果index超出范围，返回空字符串而不是显示第七爻
+  return ''
 }
 
 const getYaoTypeText = (yao: number) => {
