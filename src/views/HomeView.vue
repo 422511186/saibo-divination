@@ -17,29 +17,29 @@
       </div>
       
       <div class="features">
-        <div class="feature-card">
+        <router-link :to="{ name: 'RuleDetail', params: { type: 'yi-jing' } }" class="feature-card">
           <div class="feature-icon">🔮</div>
           <h3>易经六十四卦</h3>
           <p>传统易经算卦方法</p>
-        </div>
+        </router-link>
         
-        <div class="feature-card">
+        <router-link :to="{ name: 'RuleDetail', params: { type: 'tarot' } }" class="feature-card">
           <div class="feature-icon">🃏</div>
           <h3>塔罗牌</h3>
           <p>78张塔罗牌随机抽取</p>
-        </div>
+        </router-link>
         
-        <div class="feature-card">
+        <router-link :to="{ name: 'RuleDetail', params: { type: 'qian-shi' } }" class="feature-card">
           <div class="feature-icon">🎋</div>
           <h3>签诗</h3>
           <p>传统签诗的数字化抽取</p>
-        </div>
+        </router-link>
         
-        <div class="feature-card">
+        <router-link :to="{ name: 'RuleDetail', params: { type: 'plum-blossom' } }" class="feature-card">
           <div class="feature-icon">🔢</div>
           <h3>梅花易数</h3>
           <p>基于数字和时间的算卦方法</p>
-        </div>
+        </router-link>
       </div>
     </div>
   </div>
@@ -231,6 +231,7 @@ const features = ref([
   transition: transform 0.3s ease;
   box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
   backdrop-filter: blur(5px);
+  text-decoration: none;
   
   @media (max-width: 768px) {
     padding: 1rem;

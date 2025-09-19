@@ -13,7 +13,8 @@ const setTitle = (to: any) => {
     'History': '历史记录 - 赛博算卦',
     'HistoryDetail': '历史记录详情 - 赛博算卦',
     'TarotTest': '塔罗牌测试 - 赛博算卦',
-    'Test': '测试页面 - 赛博算卦'
+    'Test': '测试页面 - 赛博算卦',
+    'RuleDetail': '占卜规则详情 - 赛博算卦'
   }
   
   const title = titles[to.name] || '赛博算卦 - Cyber Fortune Telling'
@@ -60,6 +61,11 @@ const routes = [
     path: '/test',
     name: 'Test',
     component: TestView
+  },
+  {
+    path: '/rule/:type',
+    name: 'RuleDetail',
+    component: () => import('../views/RuleDetailView.vue')
   }
 ]
 
