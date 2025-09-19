@@ -4,7 +4,7 @@
       <h1 class="cyber-title">{{ currentDivination?.name }}</h1>
       <p class="cyber-subtitle">{{ currentDivination?.process }}</p>
     </div>
-    
+
     <div class="content">
       <div class="process-container">
         <!-- 算卦动画区域 -->
@@ -18,37 +18,37 @@
               返回主页
             </button>
           </div>
-          
+
           <div v-else class="processing">
             <!-- 根据算卦类型显示不同的动画 -->
             <div v-if="typeId === 'tarot'" class="tarot-animation">
-              <EnhancedTarotCardAnimation 
-                :card-count="3" 
-                :enable-enhanced-animation="true"
-                :particle-effects="true"
-                animation-speed="normal"
-                @complete="onTarotComplete"
-                @animationStart="handleAnimationStart"
-                @animationComplete="handleAnimationComplete"
-                @particleComplete="handleParticleComplete"
+              <EnhancedTarotCardAnimation
+                  :card-count="3"
+                  :enable-enhanced-animation="true"
+                  :particle-effects="true"
+                  animation-speed="normal"
+                  @complete="onTarotComplete"
+                  @animationStart="handleAnimationStart"
+                  @animationComplete="handleAnimationComplete"
+                  @particleComplete="handleParticleComplete"
               />
             </div>
-            
+
             <div v-else-if="typeId === 'iChing'" class="iching-animation">
-              <IChingAnimation @complete="onIChingComplete" />
+              <IChingAnimation @complete="onIChingComplete"/>
             </div>
-            
+
             <div v-else-if="typeId === 'qianShi'" class="qianshi-animation">
-              <QianShiAnimation @complete="onQianShiComplete" />
+              <QianShiAnimation @complete="onQianShiComplete"/>
             </div>
-            
+
             <div v-else-if="typeId === 'plumFlower'" class="plumflower-animation">
-              <PlumFlowerAnimation @complete="onPlumFlowerComplete" />
+              <PlumFlowerAnimation @complete="onPlumFlowerComplete"/>
             </div>
-            
+
             <!-- 默认3D动画 -->
             <Cyber3DAnimation v-else />
-            
+
             <div class="progress-info" v-if="typeId !== 'tarot' && typeId !== 'iChing' && typeId !== 'qianShi' && typeId !== 'plumFlower'">
               <p>正在计算中...</p>
               <div class="progress-bar">
@@ -58,14 +58,14 @@
             </div>
           </div>
         </div>
-        
+
         <!-- 用户问题输入 -->
         <div class="question-input">
           <label for="question">您的问题：</label>
-          <textarea 
-            id="question" 
-            v-model="userQuestion" 
-            placeholder="请输入您想算卦的问题（可选）"
+          <textarea
+              id="question"
+              v-model="userQuestion"
+              placeholder="请输入您想算卦的问题（可选）"
           ></textarea>
         </div>
       </div>
@@ -74,16 +74,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { useDivinationStore } from '../store/divination'
-import { gsap } from 'gsap'
+import {ref, computed, onMounted, watch} from 'vue'
+import {useRoute, useRouter} from 'vue-router'
+import {useDivinationStore} from '../store/divination'
+import {gsap} from 'gsap'
 import Cyber3DAnimation from '../components/Cyber3DAnimation.vue'
-import TarotCardAnimation from '../components/TarotCardAnimation.vue'
 import EnhancedTarotCardAnimation from '../components/EnhancedTarotCardAnimation.vue'
-import IChingAnimation from '../components/IChingAnimation.vue'
 import QianShiAnimation from '../components/QianShiAnimation.vue'
 import PlumFlowerAnimation from '../components/PlumFlowerAnimation.vue'
+import IChingAnimation from "@/components/IChingAnimation.vue";
 
 const route = useRoute()
 const router = useRouter()
@@ -120,12 +119,12 @@ const startDivination = () => {
     router.push('/divination')
     return
   }
-  
+
   isProcessing.value = true
   progress.value = 0
   divinationResult.value = null
   divinationDetails.value = null
-  
+
   // 对于没有专门动画的算卦类型，使用默认进度条
   if (typeId.value !== 'tarot' && typeId.value !== 'iChing' && typeId.value !== 'qianShi' && typeId.value !== 'plumFlower') {
     // 模拟进度条动画
@@ -136,7 +135,7 @@ const startDivination = () => {
         clearInterval(progressInterval)
       }
     }, 200)
-    
+
     // 模拟算卦过程（实际项目中这里会调用相应的算法）
     setTimeout(() => {
       clearInterval(progressInterval)
@@ -145,7 +144,7 @@ const startDivination = () => {
   }
 }
 
-const onTarotComplete = (cards: {number: number, suit: number}[]) => {
+const onTarotComplete = (cards: { number: number, suit: number }[]) => {
   divinationResult.value = {
     cards: cards
   }
@@ -172,13 +171,13 @@ const onIChingComplete = (result: { yao: number[], changingLines: boolean[], hex
     hexagram: result.hexagramNumber,
     changingLines: result.changingLines
   }
-  
+
   // 保存详细信息
   divinationDetails.value = {
     yao: result.yao,
     changingLines: result.changingLines
   }
-  
+
   setTimeout(() => {
     completeDivination()
   }, 2000)
@@ -210,7 +209,7 @@ const completeDivination = () => {
     router.push('/divination')
     return
   }
-  
+
   // 生成模拟结果
   const result = {
     id: Date.now().toString(),
@@ -221,10 +220,10 @@ const completeDivination = () => {
     interpretation: generateInterpretation(typeId.value),
     details: divinationDetails.value || {}
   }
-  
+
   // 保存结果到store
   store.setResult(result)
-  
+
   // 跳转到结果页面
   router.push(`/divination/${typeId.value}/result`)
 }
@@ -235,12 +234,12 @@ const generateResult = (type: string) => {
     case 'iChing':
       return {
         hexagram: Math.floor(Math.random() * 64) + 1,
-        changingLines: [Math.random() > 0.5, Math.random() > 0.5, Math.random() > 0.5, 
-                       Math.random() > 0.5, Math.random() > 0.5, Math.random() > 0.5]
+        changingLines: [Math.random() > 0.5, Math.random() > 0.5, Math.random() > 0.5,
+          Math.random() > 0.5, Math.random() > 0.5, Math.random() > 0.5]
       }
     case 'tarot':
       return {
-        cards: Array.from({ length: 3 }, () => ({
+        cards: Array.from({length: 3}, () => ({
           number: Math.floor(Math.random() * 78) + 1,
           suit: Math.floor(Math.random() * 4)
         }))
@@ -251,15 +250,15 @@ const generateResult = (type: string) => {
       }
     case 'plumFlower':
       // 梅花易数结果
-      const upperYao = Array.from({ length: 3 }, () => Math.floor(Math.random() * 2))
-      const lowerYao = Array.from({ length: 3 }, () => Math.floor(Math.random() * 2))
+      const upperYao = Array.from({length: 3}, () => Math.floor(Math.random() * 2))
+      const lowerYao = Array.from({length: 3}, () => Math.floor(Math.random() * 2))
       return {
         upperYao,
         lowerYao,
         hexagram: Math.floor(Math.random() * 64) + 1
       }
     default:
-      return { data: 'result' }
+      return {data: 'result'}
   }
 }
 
@@ -275,7 +274,7 @@ const generateInterpretation = (type: string) => {
     "当前的状况需要您保持冷静和理智。避免冲动行事，三思而后行。",
     "这是一个需要勇气面对挑战的时期。相信自己的能力，您能够克服困难。"
   ]
-  
+
   return interpretations[Math.floor(Math.random() * interpretations.length)]
 }
 
@@ -355,6 +354,10 @@ onMounted(() => {
   margin-bottom: 20px;
 }
 
+.iching-animation {
+  height: 500px; /* 调整为合适的高度 */
+}
+
 .qianshi-animation {
   width: 100%;
   height: 550px; /* 增加高度以提供更多空间 */
@@ -429,8 +432,12 @@ onMounted(() => {
     padding: 1rem;
   }
   
-  .tarot-animation, .iching-animation, .qianshi-animation, .plumflower-animation {
+  .tarot-animation, .qianshi-animation, .plumflower-animation {
     height: 350px;
+  }
+  
+  .iching-animation {
+    height: 400px; /* 移动端调整为合适的高度 */
   }
   
   .animation-area {
