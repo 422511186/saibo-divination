@@ -96,6 +96,7 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useHistoryStore } from '../store/history'
 import { useDivinationStore } from '../store/divination'
+import { ElMessageBox } from 'element-plus'
 
 const router = useRouter()
 const historyStore = useHistoryStore()
@@ -172,15 +173,35 @@ const viewDetails = (id: string) => {
 }
 
 const removeRecord = (id: string) => {
-  if (confirm('确定要删除这条记录吗？')) {
+  ElMessageBox.confirm(
+    '确定要删除这条记录吗？',
+    '确认删除',
+    {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }
+  ).then(() => {
     historyStore.removeRecord(id)
-  }
+  }).catch(() => {
+    // 用户取消删除
+  })
 }
 
 const clearHistory = () => {
-  if (confirm('确定要清空所有历史记录吗？')) {
+  ElMessageBox.confirm(
+    '确定要清空所有历史记录吗？',
+    '确认清空',
+    {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }
+  ).then(() => {
     historyStore.clearHistory()
-  }
+  }).catch(() => {
+    // 用户取消清空
+  })
 }
 
 const goHome = () => {

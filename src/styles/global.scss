@@ -243,3 +243,184 @@ li {
     padding: 10px 20px;
   }
 }
+
+// Element Plus 弹窗样式覆盖
+// 消息提示样式
+.el-message {
+  background: rgba(20, 20, 40, 0.95) !important;
+  border: 1px solid $neon-purple !important;
+  box-shadow: 0 0 15px rgba($neon-purple, 0.5) !important;
+  .el-message__content {
+    color: $text-primary !important;
+  }
+  // 成功消息
+  &.el-message--success {
+    .el-message__icon {
+      color: $neon-green !important;
+    }
+  }
+  // 信息消息
+  &.el-message--info {
+    .el-message__icon {
+      color: $neon-blue !important;
+    }
+  }
+  // 警告消息
+  &.el-message--warning {
+    .el-message__icon {
+      color: $neon-yellow !important;
+    }
+  }
+  // 错误消息
+  &.el-message--error {
+    .el-message__icon {
+      color: $neon-pink !important;
+    }
+  }
+}
+
+// 对话框样式
+.el-message-box {
+  background: rgba(12, 12, 20, 0.98) !important;
+  border: 2px solid $neon-purple !important;
+  box-shadow: 0 0 30px rgba($neon-purple, 0.6) !important;
+  .el-message-box__header {
+    border-bottom: 1px solid rgba($neon-blue, 0.3) !important;
+  }
+  .el-message-box__title {
+    color: $text-primary !important;
+    @include gradient-text();
+  }
+  .el-message-box__content {
+    color: $text-primary !important;
+    .el-message-box__message {
+      color: $text-primary !important;
+    }
+  }
+  .el-message-box__btns {
+    .el-button--primary {
+      background: linear-gradient(90deg, $neon-purple, $neon-blue) !important;
+      border: none !important;
+      color: $text-dark !important;
+      font-weight: bold !important;
+      &:hover {
+        opacity: 0.9 !important;
+      }
+    }
+    .el-button--default {
+      background: transparent !important;
+      border: 1px solid $neon-blue !important;
+      color: $neon-blue !important;
+      &:hover {
+        background: rgba($neon-blue, 0.1) !important;
+      }
+    }
+  }
+}
+
+// 通用Element Plus按钮样式覆盖
+.el-button {
+  font-family: inherit !important;
+  font-weight: bold !important;
+  transition: all 0.3s ease !important;
+  position: relative !important;
+  overflow: hidden !important;
+  outline: none !important;
+}
+
+// 主要按钮样式
+.el-button--primary {
+  background: linear-gradient(90deg, $neon-purple, $neon-blue) !important;
+  border: none !important;
+  color: $text-dark !important; // 深色文字确保在渐变背景上的可读性
+  box-shadow: 0 0 15px rgba($neon-purple, 0.5) !important;
+  &:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 5px 20px rgba($neon-purple, 0.8) !important;
+    opacity: 0.9 !important;
+  }
+  &:active {
+    transform: translateY(0) !important;
+  }
+}
+
+// 默认按钮样式
+.el-button--default {
+  background: transparent !important;
+  border: 1px solid $neon-blue !important;
+  color: $neon-blue !important; // 将白色文字改为霓虹蓝色
+  box-shadow: 0 0 10px rgba($neon-blue, 0.3) !important;
+  &:hover {
+    background: rgba($neon-blue, 0.1) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 5px 15px rgba($neon-blue, 0.5) !important;
+    border-color: $neon-blue !important;
+    color: $neon-blue !important;
+  }
+  &:active {
+    transform: translateY(0) !important;
+  }
+}
+
+// 次要按钮样式
+.el-button--success {
+  background: transparent !important;
+  border: 1px solid $neon-green !important;
+  color: $neon-green !important;
+  box-shadow: 0 0 10px rgba($neon-green, 0.3) !important;
+  &:hover {
+    background: rgba($neon-green, 0.1) !important;
+    box-shadow: 0 5px 15px rgba($neon-green, 0.5) !important;
+    border-color: $neon-green !important;
+    color: $neon-green !important;
+  }
+}
+
+.el-button--warning {
+  background: transparent !important;
+  border: 1px solid $neon-yellow !important;
+  color: $neon-yellow !important;
+  box-shadow: 0 0 10px rgba($neon-yellow, 0.3) !important;
+  &:hover {
+    background: rgba($neon-yellow, 0.1) !important;
+    box-shadow: 0 5px 15px rgba($neon-yellow, 0.5) !important;
+    border-color: $neon-yellow !important;
+    color: $neon-yellow !important;
+  }
+}
+
+.el-button--danger {
+  background: transparent !important;
+  border: 1px solid $neon-pink !important;
+  color: $neon-pink !important;
+  box-shadow: 0 0 10px rgba($neon-pink, 0.3) !important;
+  &:hover {
+    background: rgba($neon-pink, 0.1) !important;
+    box-shadow: 0 5px 15px rgba($neon-pink, 0.5) !important;
+    border-color: $neon-pink !important;
+    color: $neon-pink !important;
+  }
+}
+
+// 禁用状态
+.el-button.is-disabled {
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+}
+
+// 按钮发光效果
+.el-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: 0.5s;
+}
+
+.el-button:hover:not(.is-disabled)::before {
+  left: 100%;
+}

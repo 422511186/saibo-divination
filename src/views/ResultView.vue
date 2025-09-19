@@ -189,6 +189,7 @@ import { useDivinationStore } from '../store/divination'
 import { useHistoryStore } from '../store/history'
 import Cyber3DAnimation from '../components/Cyber3DAnimation.vue'
 import HexagramDetail from '../components/HexagramDetail.vue'
+import { ElMessage } from 'element-plus'
 
 const route = useRoute()
 const router = useRouter()
@@ -314,12 +315,12 @@ const saveToHistory = () => {
   }
   historyStore.addRecord(currentResult.value)
   // 显示保存成功提示
-  alert('已保存到历史记录')
+  ElMessage.success('已保存到历史记录')
 }
 
 const shareResult = () => {
   // 实现分享功能
-  alert('分享功能开发中')
+  ElMessage.info('分享功能开发中')
 }
 
 const divineAgain = () => {
