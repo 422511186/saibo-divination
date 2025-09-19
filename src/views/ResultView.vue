@@ -10,11 +10,12 @@
         <!-- 结果展示区域 -->
         <div class="result-display">
           <div class="result-content" v-if="currentResult">
-            <div class="result-main">
-              <div class="result-icon">{{ getResultIcon() }}</div>
-              <div class="result-details">
-                <h2>算卦结果</h2>
-                <div class="result-data" v-if="currentResult.result">
+            <div class="result-layout">
+              <!-- 左侧：牌/卦象显示 -->
+              <div class="result-left">
+                
+                <!-- 牌/卦象显示区域 -->
+                <div class="cards-display-area">
                   <div v-if="currentResult.type === 'iChing'">
                     <p>卦象编号: {{ currentResult.result.hexagram }}</p>
                     <p>变爻: {{ currentResult.result.changingLines.filter(Boolean).length }} 个</p>
@@ -34,74 +35,86 @@
                         </div>
                       </div>
                     </div>
-                    
-                    <!-- 详细的卦象解释 -->
-                    <div class="hexagram-detail-section" v-if="currentResult.details && currentResult.details.hexagramData">
-                      <h3>卦象解释</h3>
-                      <div class="hexagram-info">
-                        <p><strong>卦名:</strong> {{ currentResult.details.hexagramData.chineseName }} ({{ currentResult.details.hexagramData.name }})</p>
-                        <p><strong>卦辞:</strong> {{ currentResult.details.hexagramData.judgment }}</p>
-                        <p><strong>象辞:</strong> {{ currentResult.details.hexagramData.image }}</p>
-                        <div v-if="currentResult.details.changingLines && currentResult.details.changingLines.filter(Boolean).length > 0">
-                          <h4>变爻解释</h4>
-                          <div v-for="(isChanging, index) in currentResult.details.changingLines" :key="index" v-if="isChanging">
-                            <p><strong>{{ getYaoPosition(index) }}:</strong> {{ currentResult.details.hexagramData.lines[index] }}</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
                   </div>
                   <div v-else-if="currentResult.type === 'tarot'">
                     <p>抽到的牌:</p>
-                    <ul class="tarot-cards-list">
-                      <li v-for="(card, index) in currentResult.result.cards" :key="index">
-                        {{ getTarotCardName(card) }}
-                      </li>
-                    </ul>
-                    <!-- 塔罗牌详细解释 -->
-                    <div class="tarot-detail-section" v-if="currentResult.details && currentResult.details.cardDetails">
-                      <h3>牌义解释</h3>
-                      <div v-for="(cardDetail, index) in currentResult.details.cardDetails" :key="index" class="card-detail">
-                        <h4>{{ cardDetail.name }}<span v-if="cardDetail.reversed"> (逆位)</span></h4>
-                        <p><strong>含义:</strong> {{ cardDetail.reversed ? cardDetail.reversed : cardDetail.meaning }}</p>
+                    <div class="tarot-cards-container">
+                      <div 
+                        v-for="(card, index) in currentResult.result.cards" 
+                        :key="index"
+                        class="tarot-card-result"
+                      >
+                        <div class="card-content">
+                          <div class="card-symbol">{{ getCardSymbol(card.suit) }}</div>
+                          <div class="card-name">{{ getTarotCardName(card) }}</div>
+                        </div>
                       </div>
                     </div>
                   </div>
                   <div v-else-if="currentResult.type === 'qianShi'">
                     <p>签号: {{ currentResult.result.signNumber }}</p>
-                    <!-- 签诗详细内容 -->
-                    <div class="qianshi-detail-section" v-if="currentResult.details && currentResult.details.poemData">
-                      <h3>签诗内容</h3>
-                      <div class="poem-content">
-                        <p><strong>签题:</strong> {{ currentResult.details.poemData.title }}</p>
-                        <p><strong>签诗:</strong> {{ currentResult.details.poemData.content }}</p>
-                        <p><strong>解释:</strong> {{ currentResult.details.poemData.explanation }}</p>
-                        <p><strong>寓意:</strong> {{ currentResult.details.poemData.meaning }}</p>
-                      </div>
-                    </div>
                   </div>
                   <div v-else-if="currentResult.type === 'plumFlower'">
                     <p>上卦: {{ currentResult.result.upperYao.join('') }}</p>
                     <p>下卦: {{ currentResult.result.lowerYao.join('') }}</p>
                     <p>卦象编号: {{ currentResult.result.hexagram }}</p>
-                    <!-- 梅花易数卦象解释 -->
-                    <div class="plumflower-detail-section" v-if="currentResult.details && currentResult.details.hexagramData">
-                      <h3>卦象解释</h3>
-                      <div class="hexagram-info">
-                        <p><strong>卦名:</strong> {{ currentResult.details.hexagramData.chineseName }} ({{ currentResult.details.hexagramData.name }})</p>
-                        <p><strong>描述:</strong> {{ currentResult.details.hexagramData.description }}</p>
-                        <p><strong>卦辞:</strong> {{ currentResult.details.hexagramData.judgment }}</p>
-                        <p><strong>象辞:</strong> {{ currentResult.details.hexagramData.image }}</p>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- 右侧：解释内容 -->
+              <div class="result-right">
+                <h2>算卦结果</h2>
+                
+                <!-- 详细的解释内容 -->
+                <div v-if="currentResult.type === 'iChing' && currentResult.details && currentResult.details.hexagramData" class="hexagram-detail-section">
+                  <h3>卦象解释</h3>
+                  <div class="hexagram-info">
+                    <p><strong>卦名:</strong> {{ currentResult.details.hexagramData.chineseName }} ({{ currentResult.details.hexagramData.name }})</p>
+                    <p><strong>卦辞:</strong> {{ currentResult.details.hexagramData.judgment }}</p>
+                    <p><strong>象辞:</strong> {{ currentResult.details.hexagramData.image }}</p>
+                    <div v-if="currentResult.details.changingLines && currentResult.details.changingLines.filter(Boolean).length > 0">
+                      <h4>变爻解释</h4>
+                      <div v-for="(isChanging, index) in currentResult.details.changingLines" :key="index" v-if="isChanging">
+                        <p><strong>{{ getYaoPosition(index) }}:</strong> {{ currentResult.details.hexagramData.lines[index] }}</p>
                       </div>
                     </div>
                   </div>
                 </div>
+                
+                <div v-else-if="currentResult.type === 'tarot' && currentResult.details && currentResult.details.cardDetails" class="tarot-detail-section">
+                  <h3>牌义解释</h3>
+                  <div v-for="(cardDetail, index) in currentResult.details.cardDetails" :key="index" class="card-detail">
+                    <h4>{{ cardDetail.name }}<span v-if="cardDetail.reversed"> (逆位)</span></h4>
+                    <p><strong>含义:</strong> {{ cardDetail.reversed ? cardDetail.reversed : cardDetail.meaning }}</p>
+                  </div>
+                </div>
+                
+                <div v-else-if="currentResult.type === 'qianShi' && currentResult.details && currentResult.details.poemData" class="qianshi-detail-section">
+                  <h3>签诗内容</h3>
+                  <div class="poem-content">
+                    <p><strong>签题:</strong> {{ currentResult.details.poemData.title }}</p>
+                    <p><strong>签诗:</strong> {{ currentResult.details.poemData.content }}</p>
+                    <p><strong>解释:</strong> {{ currentResult.details.poemData.explanation }}</p>
+                    <p><strong>寓意:</strong> {{ currentResult.details.poemData.meaning }}</p>
+                  </div>
+                </div>
+                
+                <div v-else-if="currentResult.type === 'plumFlower' && currentResult.details && currentResult.details.hexagramData" class="plumflower-detail-section">
+                  <h3>卦象解释</h3>
+                  <div class="hexagram-info">
+                    <p><strong>卦名:</strong> {{ currentResult.details.hexagramData.chineseName }} ({{ currentResult.details.hexagramData.name }})</p>
+                    <p><strong>描述:</strong> {{ currentResult.details.hexagramData.description }}</p>
+                    <p><strong>卦辞:</strong> {{ currentResult.details.hexagramData.judgment }}</p>
+                    <p><strong>象辞:</strong> {{ currentResult.details.hexagramData.image }}</p>
+                  </div>
+                </div>
+                
+                <div class="interpretation">
+                  <h3>结果解读</h3>
+                  <p>{{ currentResult.interpretation }}</p>
+                </div>
               </div>
-            </div>
-            
-            <div class="interpretation">
-              <h3>结果解读</h3>
-              <p>{{ currentResult.interpretation }}</p>
             </div>
             
             <div class="user-question" v-if="currentResult.question">
@@ -201,37 +214,45 @@ const getYaoTypeText = (yao: number) => {
   return yao === 2 ? '阳爻 (━━━━━)' : '阴爻 (━ ━ ━)'
 }
 
+const getCardSymbol = (suit: number) => {
+  // 大阿卡纳牌没有花色
+  if (suit === -1) return '★'
+  const symbols = ['♣', '♦', '♥', '♠']
+  return symbols[suit] || ''
+}
+
 const getTarotCardName = (card: any) => {
   // 如果卡片有name属性，直接使用
   if (card.name) {
-    return card.name + (card.reversed ? ' (逆位)' : '');
+    return card.name + (card.reversed ? ' (逆位)' : '')
   }
   
   // 大阿卡纳牌 (suit = -1)
   if (card.suit === -1) {
     const majorArcana = [
-      "愚者", "魔术师", "女祭司", "皇后", "皇帝", "教皇", "恋人",
-      "战车", "力量", "隐者", "命运之轮", "正义", "倒吊人", "死神",
-      "节制", "恶魔", "塔", "星星", "月亮", "太阳", "审判", "世界"
+      '愚者', '魔术师', '女祭司', '皇后', '皇帝', '教皇', '恋人',
+      '战车', '力量', '隐者', '命运之轮', '正义', '倒吊人', '死神',
+      '节制', '恶魔', '塔', '星星', '月亮', '太阳', '审判', '世界'
     ]
-    return (majorArcana[card.number] || `大阿卡纳${card.number}`) + (card.reversed ? ' (逆位)' : '');
+    return (majorArcana[card.number] || `大阿卡纳${card.number}`) + (card.reversed ? ' (逆位)' : '')
   }
   
   // 小阿卡纳牌
-  const suits = ['♣', '♦', '♥', '♠'];
-  const suitSymbol = suits[card.suit] || '';
+  const suits = ['♣', '♦', '♥', '♠']
+  const suitSymbol = suits[card.suit] || ''
   
-  let cardName = '';
+  let cardName = ''
   if (card.number === 1) {
-    cardName = 'A';
+    cardName = 'A'
   } else if (card.number > 1 && card.number <= 10) {
-    cardName = card.number.toString();
+    cardName = card.number.toString()
   } else {
-    const names = ["J", "Q", "K"];
-    cardName = names[card.number - 11] || card.number.toString();
+    // 将英文J、Q、K改为中文表示
+    const names = ['侍从', '王后', '国王']
+    cardName = names[card.number - 11] || card.number.toString()
   }
   
-  return `${suitSymbol}${cardName}` + (card.reversed ? ' (逆位)' : '');
+  return `${suitSymbol}${cardName}` + (card.reversed ? ' (逆位)' : '')
 }
 
 const saveToHistory = () => {
@@ -292,7 +313,7 @@ const goHome = () => {
 }
 
 .result-container {
-  max-width: 800px;
+  max-width: 1200px;
   margin: 0 auto;
   position: relative;
   z-index: 1;
@@ -308,38 +329,105 @@ const goHome = () => {
   backdrop-filter: blur(10px);
 }
 
-.result-main {
+.result-layout {
   display: flex;
-  align-items: center;
+  gap: 2rem;
   margin-bottom: 2rem;
-  padding-bottom: 2rem;
-  border-bottom: 1px solid rgba(188, 19, 254, 0.3);
+}
+
+.result-left {
+  flex: 1;
+  background: rgba(8, 8, 16, 0.5);
+  border: 1px solid #00f0ff;
+  border-radius: 8px;
+  padding: 1.5rem;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .result-icon {
-  font-size: 4rem;
-  margin-right: 2rem;
-  animation: pulse 2s infinite;
+  display: none;
 }
 
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); }
-}
-
-.result-details h2 {
-  color: #ff00ff;
-  margin-bottom: 1rem;
-}
-
-.result-data {
+.cards-display-area {
+  width: 100%;
+  text-align: center;
   color: #00f0ff;
   font-size: 1.1rem;
 }
 
-.result-data p {
-  margin-bottom: 0.5rem;
+.tarot-cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.tarot-card-result {
+  width: 100px;
+  height: 140px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  border: 2px solid #4b0082;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 8px 15px rgba(75, 0, 130, 0.2), 0 2px 5px rgba(0, 0, 0, 0.3);
+  color: #000;
+  padding: 10px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.tarot-card-result:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 20px rgba(75, 0, 130, 0.3), 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.card-content {
+  text-align: center;
+}
+
+.card-symbol {
+  font-size: 3rem;
+  margin-bottom: 10px;
+  color: #4b0082;
+}
+
+.card-name {
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #4b0082;
+  text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+}
+
+.result-right {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+}
+
+.result-right h2 {
+  color: #ff00ff;
+  margin-bottom: 1rem;
+}
+
+.interpretation {
+  margin-top: 1.5rem;
+}
+
+.interpretation h3, .user-question h3 {
+  color: #ff00ff;
+  margin-bottom: 1rem;
+}
+
+.interpretation p, .user-question p {
+  color: #00f0ff;
+  line-height: 1.6;
+  font-size: 1.1rem;
 }
 
 .yao-details h3 {
@@ -349,6 +437,7 @@ const goHome = () => {
 
 .yao-list {
   margin-top: 0.5rem;
+  text-align: left;
 }
 
 .yao-item {
@@ -378,33 +467,42 @@ const goHome = () => {
   font-weight: bold;
 }
 
-.hexagram-detail-section {
-  margin-top: 20px;
+.hexagram-detail-section, .tarot-detail-section, .qianshi-detail-section, .plumflower-detail-section {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: rgba(8, 8, 16, 0.3);
+  border-radius: 8px;
 }
 
-.tarot-cards-list {
-  list-style-type: none;
-  padding: 0;
-}
-
-.tarot-cards-list li {
-  margin-bottom: 0.3rem;
-  padding: 0.2rem 0;
-}
-
-.interpretation {
-  margin-bottom: 2rem;
-}
-
-.interpretation h3, .user-question h3 {
+.hexagram-detail-section h3, .tarot-detail-section h3, .qianshi-detail-section h3, .plumflower-detail-section h3 {
   color: #ff00ff;
-  margin-bottom: 1rem;
+  margin-bottom: 0.8rem;
 }
 
-.interpretation p, .user-question p {
+.hexagram-info, .poem-content {
   color: #00f0ff;
   line-height: 1.6;
-  font-size: 1.1rem;
+}
+
+.hexagram-info p, .poem-content p {
+  margin-bottom: 0.5rem;
+}
+
+.card-detail {
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+}
+
+.card-detail:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.card-detail h4 {
+  color: #ff00ff;
+  margin-bottom: 0.3rem;
 }
 
 .result-actions {

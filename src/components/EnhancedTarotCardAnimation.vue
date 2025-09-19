@@ -161,9 +161,9 @@ const progressPercent = computed(() => {
 
 // 动画速度映射
 const animationSpeedMap = {
-  slow: 1.5,
-  normal: 1,
-  fast: 0.7
+  slow: 2.5,
+  normal: 1.8,
+  fast: 1.2
 }
 
 const currentSpeed = computed(() => {
@@ -262,7 +262,8 @@ const shuffleCards = <T>(array: T[]): T[] => {
 
 // 洗牌动画
 const shuffleAnimation = async () => {
-  await new Promise(resolve => setTimeout(resolve, 2000 * currentSpeed.value))
+  // 增加洗牌时间，让用户看到明显的洗牌过程
+  await new Promise(resolve => setTimeout(resolve, 3000 * currentSpeed.value))
 }
 
 // 抽牌动画
@@ -288,7 +289,7 @@ const drawCardAnimation = async (index: number) => {
         rotation: parseFloat(getComputedStyle(cardElement).getPropertyValue('--rotate') || '0'),
         scale: 1,
         opacity: 1,
-        duration: 1 * currentSpeed.value,
+        duration: 1.5 * currentSpeed.value, // 增加抽牌动画时间
         ease: "back.out(1.7)",
         onComplete: resolve
       }
@@ -309,7 +310,7 @@ const flipCardAnimation = async (index: number) => {
   return new Promise(resolve => {
     gsap.to(cardInner, {
       rotationY: 180,
-      duration: 0.8 * currentSpeed.value,
+      duration: 1.2 * currentSpeed.value, // 增加翻牌动画时间
       ease: "power2.out",
       onComplete: resolve
     })
@@ -354,11 +355,12 @@ const startDeal = async () => {
     
     currentDealStep.value = i + 1
     await drawCardAnimation(i)
+    await new Promise(resolve => setTimeout(resolve, 500 * currentSpeed.value)) // 增加每张牌之间的间隔
   }
   
-  // 翻牌
+  // 翻牌前的停顿
   currentDealStep.value = cardCount.value + 1
-  await new Promise(resolve => setTimeout(resolve, 800 * currentSpeed.value))
+  await new Promise(resolve => setTimeout(resolve, 1000 * currentSpeed.value))
   
   // 逐张翻牌
   for (let i = 0; i < cardCount.value; i++) {
@@ -367,13 +369,13 @@ const startDeal = async () => {
     dealtCards.value[i].reversed = reversed
     dealtCards.value[i].isRevealed = true // 翻转显示正面
     await flipCardAnimation(i)
-    await new Promise(resolve => setTimeout(resolve, 300 * currentSpeed.value))
+    await new Promise(resolve => setTimeout(resolve, 800 * currentSpeed.value)) // 增加翻牌间隔
   }
   
   currentDealStep.value = cardCount.value + 2
   
-  // 完成
-  await new Promise(resolve => setTimeout(resolve, 1000 * currentSpeed.value))
+  // 完成前的停顿，让用户看清楚结果
+  await new Promise(resolve => setTimeout(resolve, 2000 * currentSpeed.value))
   
   const cardResults = dealtCards.value.map(card => ({
     number: card.number,
