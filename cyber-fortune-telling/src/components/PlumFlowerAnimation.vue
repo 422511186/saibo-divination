@@ -9,26 +9,62 @@
         <div class="number-inputs">
           <div class="input-group">
             <label for="number1">第一个数字</label>
-            <input 
-              id="number1" 
-              type="number" 
-              v-model="firstNumber" 
-              min="1" 
-              max="9999"
-              placeholder="1-9999"
-            />
+            <div class="custom-number-input">
+              <button 
+                class="number-btn decrement" 
+                @click="decrementNumber('first')"
+                :disabled="isFirstNumberMin"
+              >
+                -
+              </button>
+              <input 
+                id="number1" 
+                type="number" 
+                v-model="firstNumber" 
+                min="1" 
+                max="9999"
+                placeholder="1-9999"
+                @input="validateInput('first', $event)"
+                class="number-input"
+              />
+              <button 
+                class="number-btn increment" 
+                @click="incrementNumber('first')"
+                :disabled="isFirstNumberMax"
+              >
+                +
+              </button>
+            </div>
           </div>
           
           <div class="input-group">
             <label for="number2">第二个数字</label>
-            <input 
-              id="number2" 
-              type="number" 
-              v-model="secondNumber" 
-              min="1" 
-              max="9999"
-              placeholder="1-9999"
-            />
+            <div class="custom-number-input">
+              <button 
+                class="number-btn decrement" 
+                @click="decrementNumber('second')"
+                :disabled="isSecondNumberMin"
+              >
+                -
+              </button>
+              <input 
+                id="number2" 
+                type="number" 
+                v-model="secondNumber" 
+                min="1" 
+                max="9999"
+                placeholder="1-9999"
+                @input="validateInput('second', $event)"
+                class="number-input"
+              />
+              <button 
+                class="number-btn increment" 
+                @click="incrementNumber('second')"
+                :disabled="isSecondNumberMax"
+              >
+                +
+              </button>
+            </div>
           </div>
         </div>
         
@@ -89,11 +125,30 @@ const upperYao = ref<number[]>([])
 const lowerYao = ref<number[]>([])
 const currentStep = ref(0)
 
+// 计算属性用于按钮禁用状态
+const isFirstNumberMin = computed(() => {
+  return firstNumber.value === null || firstNumber.value <= 1
+})
+
+const isFirstNumberMax = computed(() => {
+  return firstNumber.value !== null && firstNumber.value >= 9999
+})
+
+const isSecondNumberMin = computed(() => {
+  return secondNumber.value === null || secondNumber.value <= 1
+})
+
+const isSecondNumberMax = computed(() => {
+  return secondNumber.value !== null && secondNumber.value >= 9999
+})
+
 const canCalculate = computed(() => {
   return firstNumber.value !== null && 
          secondNumber.value !== null && 
          firstNumber.value > 0 && 
-         secondNumber.value > 0
+         secondNumber.value > 0 &&
+         firstNumber.value <= 9999 &&
+         secondNumber.value <= 9999
 })
 
 const progressText = computed(() => {
@@ -114,6 +169,65 @@ const getYaoClass = (yao: number) => {
 
 const getYaoSymbol = (yao: number) => {
   return yao === 1 ? '━━━━━' : '━ ━ ━'
+}
+
+const incrementNumber = (type: 'first' | 'second') => {
+  if (type === 'first') {
+    if (firstNumber.value === null) {
+      firstNumber.value = 1
+    } else if (firstNumber.value < 9999) {
+      firstNumber.value++
+    }
+  } else {
+    if (secondNumber.value === null) {
+      secondNumber.value = 1
+    } else if (secondNumber.value < 9999) {
+      secondNumber.value++
+    }
+  }
+}
+
+const decrementNumber = (type: 'first' | 'second') => {
+  if (type === 'first') {
+    if (firstNumber.value === null || firstNumber.value <= 1) {
+      firstNumber.value = 1
+    } else {
+      firstNumber.value--
+    }
+  } else {
+    if (secondNumber.value === null || secondNumber.value <= 1) {
+      secondNumber.value = 1
+    } else {
+      secondNumber.value--
+    }
+  }
+}
+
+const validateInput = (type: 'first' | 'second', event: Event) => {
+  const input = event.target as HTMLInputElement
+  const value = parseInt(input.value)
+  
+  if (isNaN(value) || value < 1) {
+    input.value = '1'
+    if (type === 'first') {
+      firstNumber.value = 1
+    } else {
+      secondNumber.value = 1
+    }
+  } else if (value > 9999) {
+    input.value = '9999'
+    if (type === 'first') {
+      firstNumber.value = 9999
+    } else {
+      secondNumber.value = 9999
+    }
+  } else {
+    if (type === 'first') {
+      firstNumber.value = value
+    } else {
+      secondNumber.value = value
+    }
+  }
 }
 
 const startCalculation = () => {
@@ -270,8 +384,14 @@ const completeCalculation = () => {
   font-weight: bold;
 }
 
-.input-group input {
-  width: 120px;
+.custom-number-input {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.number-input {
+  width: 100px;
   padding: 0.8rem;
   text-align: center;
   font-size: 1.1rem;
@@ -279,12 +399,55 @@ const completeCalculation = () => {
   border: 1px solid #bc13fe;
   border-radius: 5px;
   color: #00f0ff;
+  
+  /* 隐藏浏览器默认的数字输入框上下箭头 */
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  
+  &[type=number] {
+    -moz-appearance: textfield;
+  }
 }
 
-.input-group input:focus {
+.number-input:focus {
   outline: none;
   border-color: #00f0ff;
   box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
+}
+
+.number-btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #bc13fe, #00f0ff);
+  color: #0c0c14;
+  border: none;
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(188, 19, 254, 0.5);
+  
+  &:hover:not(:disabled) {
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(188, 19, 254, 0.8);
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+  }
+  
+  &.increment {
+    background: linear-gradient(135deg, #00f0ff, #bc13fe);
+  }
 }
 
 .cyber-button {

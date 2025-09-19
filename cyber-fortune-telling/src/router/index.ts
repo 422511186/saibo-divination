@@ -30,6 +30,11 @@ const routes = [
     component: () => import('../views/HistoryView.vue')
   },
   {
+    path: '/history/:id',
+    name: 'HistoryDetail',
+    component: () => import('../views/HistoryDetailView.vue')
+  },
+  {
     path: '/tarot-test',
     name: 'TarotTest',
     component: TarotTestView

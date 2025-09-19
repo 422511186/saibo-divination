@@ -13,7 +13,9 @@ export class AnimationController {
   async shuffleAnimation(duration: number = 1.5): Promise<void> {
     return new Promise(resolve => {
       // 创建洗牌粒子效果
-      createParticleEffect(this.container, 'sparkle')
+      if (this.container) {
+        createParticleEffect(this.container, 'sparkle')
+      }
       
       // 牌堆3D旋转效果
       const cardPileElements = this.container.querySelectorAll('.card-back')
@@ -38,7 +40,9 @@ export class AnimationController {
   ): Promise<void> {
     return new Promise(resolve => {
       // 创建抽牌粒子效果
-      createParticleEffect(this.container, 'magic')
+      if (this.container) {
+        createParticleEffect(this.container, 'magic')
+      }
       
       // 螺旋式抽出动画
       gsap.fromTo(element, 
@@ -72,7 +76,9 @@ export class AnimationController {
   ): Promise<void> {
     return new Promise(resolve => {
       // 创建翻牌粒子效果
-      createParticleEffect(this.container, 'glow')
+      if (this.container) {
+        createParticleEffect(this.container, 'glow')
+      }
       
       // 增强的3D翻牌效果
       gsap.to(element, {
@@ -89,7 +95,9 @@ export class AnimationController {
   async completeAnimation(cards: HTMLElement[]): Promise<void> {
     return new Promise(resolve => {
       // 创建完成粒子效果
-      createParticleEffect(this.container, 'firework')
+      if (this.container && this.container.parentElement) {
+        createParticleEffect(this.container, 'firework')
+      }
       
       // 对所有卡片执行轻微的缩放和发光效果
       gsap.to(cards, {

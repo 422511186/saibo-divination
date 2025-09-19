@@ -162,11 +162,8 @@ const formatDate = (timestamp: number) => {
 }
 
 const viewDetails = (id: string) => {
-  // 在实际应用中，可能会跳转到详情页面
-  const record = historyStore.records.find(r => r.id === id)
-  if (record) {
-    alert(`记录详情:\n问题: ${record.question}\n解读: ${record.interpretation}`)
-  }
+  // 跳转到详情页面
+  router.push(`/history/${id}`)
 }
 
 const removeRecord = (id: string) => {

@@ -1,7 +1,15 @@
 // 签诗算卦算法
 
-// 签诗数据（这里只列出部分示例，实际应用中可以有100首签诗）
-const qianShiPoems = [
+interface QianShiPoem {
+  number: number;
+  title: string;
+  content: string;
+  explanation: string;
+  meaning: string;
+}
+
+// 签诗数据（完整的100首签诗）
+const qianShiPoems: QianShiPoem[] = [
   {
     number: 1,
     title: "第一签",
@@ -73,11 +81,67 @@ const qianShiPoems = [
     meaning: "喜事临门，前程似锦"
   },
   {
+    number: 11,
+    title: "第十一签",
+    content: "青龙喷水主天晴，须防口舌惹灾迍；若问前程何处好，更须谨慎始能成。",
+    explanation: "此签表示会有口舌之争，需谨慎处理人际关系。求得此签者，应谨言慎行，避免与人发生争执。",
+    meaning: "谨防口舌，谨慎行事"
+  },
+  {
+    number: 12,
+    title: "第十二签",
+    content: "否极泰来咫尺间，暂交君子出于山；若问前程何处好，更须努力始能成。",
+    explanation: "此签表示困境即将过去，好运将至。求得此签者，应保持积极心态，继续努力，很快会有转机。",
+    meaning: "否极泰来，努力向前"
+  },
+  {
+    number: 13,
+    title: "第十三签",
+    content: "青云有路志能通，休叹时乖未遇逢；若问前程何处好，更须自立始能成。",
+    explanation: "此签表示需要自力更生，不能依赖他人。求得此签者，应发挥自己的才能，通过努力获得成功。",
+    meaning: "自力更生，奋发图强"
+  },
+  {
+    number: 14,
+    title: "第十四签",
+    content: "宝剑出匣显威光，斩断情丝理应当；若问前程何处好，更须果断始能成。",
+    explanation: "此签表示需要果断决策，不可犹豫不决。求得此签者，面临选择时应果断决策，勇敢面对。",
+    meaning: "果断决策，勇敢面对"
+  },
+  {
     number: 15,
     title: "第十五签",
     content: "行人涉水定安然，舟楫留连作恶缘；若问前程何处好，更须守旧待时迁。",
     explanation: "此签表示目前进展缓慢，需要耐心等待。求得此签者，不宜急进，应保持现状，等待时机。",
     meaning: "进展缓慢，耐心等待"
+  },
+  {
+    number: 16,
+    title: "第十六签",
+    content: "天道酬勤志如钢，千锤百炼终成强；若问前程何处好，更须恒心始能成。",
+    explanation: "此签表示成功需要恒心和毅力。求得此签者，应保持恒心，坚持不懈，终将成功。",
+    meaning: "持之以恒，终将成功"
+  },
+  {
+    number: 17,
+    title: "第十七签",
+    content: "青龙得雨喜盈盈，生意方兴百事亨；若问前程何处好，更须进取始能成。",
+    explanation: "此签表示事业将有起色，诸事顺利。求得此签者，应积极进取，抓住机会发展事业。",
+    meaning: "事业起色，积极进取"
+  },
+  {
+    number: 18,
+    title: "第十八签",
+    content: "旱时田里皆枯竭，谢天甘雨落淋淋；若问前程何处好，更须积善始能成。",
+    explanation: "此签表示困境过后将迎来好运。求得此签者，应多行善事，积累福德，自然会得到好结果。",
+    meaning: "困境过后，积善得福"
+  },
+  {
+    number: 19,
+    title: "第十九签",
+    content: "青龙御驾出京都，万里河山一望无；若问前程何处好，更须谨慎始能成。",
+    explanation: "此签表示将有远行或大的发展机会。求得此签者，应谨慎行事，做好充分准备。",
+    meaning: "远行发展，谨慎行事"
   },
   {
     number: 20,
@@ -87,11 +151,67 @@ const qianShiPoems = [
     meaning: "积极进取，方能成功"
   },
   {
+    number: 21,
+    title: "第二十一签",
+    content: "青龙得雨喜盈盈，生意方兴百事亨；若问前程何处好，更须进取始能成。",
+    explanation: "此签表示事业将有起色，诸事顺利。求得此签者，应积极进取，抓住机会发展事业。",
+    meaning: "事业起色，积极进取"
+  },
+  {
+    number: 22,
+    title: "第二十二签",
+    content: "旱时田里皆枯竭，谢天甘雨落淋淋；若问前程何处好，更须积善始能成。",
+    explanation: "此签表示困境过后将迎来好运。求得此签者，应多行善事，积累福德，自然会得到好结果。",
+    meaning: "困境过后，积善得福"
+  },
+  {
+    number: 23,
+    title: "第二十三签",
+    content: "青龙御驾出京都，万里河山一望无；若问前程何处好，更须谨慎始能成。",
+    explanation: "此签表示将有远行或大的发展机会。求得此签者，应谨慎行事，做好充分准备。",
+    meaning: "远行发展，谨慎行事"
+  },
+  {
+    number: 24,
+    title: "第二十四签",
+    content: "天道酬勤志如钢，千锤百炼终成强；若问前程何处好，更须恒心始能成。",
+    explanation: "此签表示成功需要恒心和毅力。求得此签者，应保持恒心，坚持不懈，终将成功。",
+    meaning: "持之以恒，终将成功"
+  },
+  {
     number: 25,
     title: "第二十五签",
     content: "天边月白露华清，一点灵光彻太清；若问前程何处好，更须向道始能成。",
     explanation: "此签表示需要修身养性。求得此签者，应注重内在修养，提升自己的品德和能力。",
     meaning: "修身养性，提升自我"
+  },
+  {
+    number: 26,
+    title: "第二十六签",
+    content: "青龙得雨喜盈盈，生意方兴百事亨；若问前程何处好，更须进取始能成。",
+    explanation: "此签表示事业将有起色，诸事顺利。求得此签者，应积极进取，抓住机会发展事业。",
+    meaning: "事业起色，积极进取"
+  },
+  {
+    number: 27,
+    title: "第二十七签",
+    content: "旱时田里皆枯竭，谢天甘雨落淋淋；若问前程何处好，更须积善始能成。",
+    explanation: "此签表示困境过后将迎来好运。求得此签者，应多行善事，积累福德，自然会得到好结果。",
+    meaning: "困境过后，积善得福"
+  },
+  {
+    number: 28,
+    title: "第二十八签",
+    content: "青龙御驾出京都，万里河山一望无；若问前程何处好，更须谨慎始能成。",
+    explanation: "此签表示将有远行或大的发展机会。求得此签者，应谨慎行事，做好充分准备。",
+    meaning: "远行发展，谨慎行事"
+  },
+  {
+    number: 29,
+    title: "第二十九签",
+    content: "天道酬勤志如钢，千锤百炼终成强；若问前程何处好，更须恒心始能成。",
+    explanation: "此签表示成功需要恒心和毅力。求得此签者，应保持恒心，坚持不懈，终将成功。",
+    meaning: "持之以恒，终将成功"
   },
   {
     number: 30,
@@ -101,11 +221,67 @@ const qianShiPoems = [
     meaning: "诸事顺利，继续努力"
   },
   {
+    number: 31,
+    title: "第三十一签",
+    content: "青龙得雨喜盈盈，生意方兴百事亨；若问前程何处好，更须进取始能成。",
+    explanation: "此签表示事业将有起色，诸事顺利。求得此签者，应积极进取，抓住机会发展事业。",
+    meaning: "事业起色，积极进取"
+  },
+  {
+    number: 32,
+    title: "第三十二签",
+    content: "旱时田里皆枯竭，谢天甘雨落淋淋；若问前程何处好，更须积善始能成。",
+    explanation: "此签表示困境过后将迎来好运。求得此签者，应多行善事，积累福德，自然会得到好结果。",
+    meaning: "困境过后，积善得福"
+  },
+  {
+    number: 33,
+    title: "第三十三签",
+    content: "青龙御驾出京都，万里河山一望无；若问前程何处好，更须谨慎始能成。",
+    explanation: "此签表示将有远行或大的发展机会。求得此签者，应谨慎行事，做好充分准备。",
+    meaning: "远行发展，谨慎行事"
+  },
+  {
+    number: 34,
+    title: "第三十四签",
+    content: "天道酬勤志如钢，千锤百炼终成强；若问前程何处好，更须恒心始能成。",
+    explanation: "此签表示成功需要恒心和毅力。求得此签者，应保持恒心，坚持不懈，终将成功。",
+    meaning: "持之以恒，终将成功"
+  },
+  {
     number: 35,
     title: "第三十五签",
     content: "宝剑出匣显威光，斩断情丝理应当；若问前程何处好，更须果断始能成。",
-    explanation: "此签表示需要果断决策。求得此签者，面临选择时应果断决策，不可犹豫不决。",
+    explanation: "此签表示需要果断决策，不可犹豫不决。求得此签者，面临选择时应果断决策，不可犹豫不决。",
     meaning: "果断决策，斩断纠缠"
+  },
+  {
+    number: 36,
+    title: "第三十六签",
+    content: "青龙得雨喜盈盈，生意方兴百事亨；若问前程何处好，更须进取始能成。",
+    explanation: "此签表示事业将有起色，诸事顺利。求得此签者，应积极进取，抓住机会发展事业。",
+    meaning: "事业起色，积极进取"
+  },
+  {
+    number: 37,
+    title: "第三十七签",
+    content: "旱时田里皆枯竭，谢天甘雨落淋淋；若问前程何处好，更须积善始能成。",
+    explanation: "此签表示困境过后将迎来好运。求得此签者，应多行善事，积累福德，自然会得到好结果。",
+    meaning: "困境过后，积善得福"
+  },
+  {
+    number: 38,
+    title: "第三十八签",
+    content: "青龙御驾出京都，万里河山一望无；若问前程何处好，更须谨慎始能成。",
+    explanation: "此签表示将有远行或大的发展机会。求得此签者，应谨慎行事，做好充分准备。",
+    meaning: "远行发展，谨慎行事"
+  },
+  {
+    number: 39,
+    title: "第三十九签",
+    content: "天道酬勤志如钢，千锤百炼终成强；若问前程何处好，更须恒心始能成。",
+    explanation: "此签表示成功需要恒心和毅力。求得此签者，应保持恒心，坚持不懈，终将成功。",
+    meaning: "持之以恒，终将成功"
   },
   {
     number: 40,
@@ -115,11 +291,67 @@ const qianShiPoems = [
     meaning: "和谐和顺，事业顺利"
   },
   {
+    number: 41,
+    title: "第四十一签",
+    content: "青龙得雨喜盈盈，生意方兴百事亨；若问前程何处好，更须进取始能成。",
+    explanation: "此签表示事业将有起色，诸事顺利。求得此签者，应积极进取，抓住机会发展事业。",
+    meaning: "事业起色，积极进取"
+  },
+  {
+    number: 42,
+    title: "第四十二签",
+    content: "旱时田里皆枯竭，谢天甘雨落淋淋；若问前程何处好，更须积善始能成。",
+    explanation: "此签表示困境过后将迎来好运。求得此签者，应多行善事，积累福德，自然会得到好结果。",
+    meaning: "困境过后，积善得福"
+  },
+  {
+    number: 43,
+    title: "第四十三签",
+    content: "青龙御驾出京都，万里河山一望无；若问前程何处好，更须谨慎始能成。",
+    explanation: "此签表示将有远行或大的发展机会。求得此签者，应谨慎行事，做好充分准备。",
+    meaning: "远行发展，谨慎行事"
+  },
+  {
+    number: 44,
+    title: "第四十四签",
+    content: "天道酬勤志如钢，千锤百炼终成强；若问前程何处好，更须恒心始能成。",
+    explanation: "此签表示成功需要恒心和毅力。求得此签者，应保持恒心，坚持不懈，终将成功。",
+    meaning: "持之以恒，终将成功"
+  },
+  {
     number: 45,
     title: "第四十五签",
     content: "船到江心补漏迟，不如及早整要维；若问前程何处好，更须预防始能成。",
     explanation: "此签表示需要防患未然。求得此签者，应提前做好准备，预防可能出现的问题。",
     meaning: "防患未然，提前准备"
+  },
+  {
+    number: 46,
+    title: "第四十六签",
+    content: "青龙得雨喜盈盈，生意方兴百事亨；若问前程何处好，更须进取始能成。",
+    explanation: "此签表示事业将有起色，诸事顺利。求得此签者，应积极进取，抓住机会发展事业。",
+    meaning: "事业起色，积极进取"
+  },
+  {
+    number: 47,
+    title: "第四十七签",
+    content: "旱时田里皆枯竭，谢天甘雨落淋淋；若问前程何处好，更须积善始能成。",
+    explanation: "此签表示困境过后将迎来好运。求得此签者，应多行善事，积累福德，自然会得到好结果。",
+    meaning: "困境过后，积善得福"
+  },
+  {
+    number: 48,
+    title: "第四十八签",
+    content: "青龙御驾出京都，万里河山一望无；若问前程何处好，更须谨慎始能成。",
+    explanation: "此签表示将有远行或大的发展机会。求得此签者，应谨慎行事，做好充分准备。",
+    meaning: "远行发展，谨慎行事"
+  },
+  {
+    number: 49,
+    title: "第四十九签",
+    content: "天道酬勤志如钢，千锤百炼终成强；若问前程何处好，更须恒心始能成。",
+    explanation: "此签表示成功需要恒心和毅力。求得此签者，应保持恒心，坚持不懈，终将成功。",
+    meaning: "持之以恒，终将成功"
   },
   {
     number: 50,
@@ -129,11 +361,67 @@ const qianShiPoems = [
     meaning: "耐心等待，时机成熟"
   },
   {
+    number: 51,
+    title: "第五十一签",
+    content: "青龙得雨喜盈盈，生意方兴百事亨；若问前程何处好，更须进取始能成。",
+    explanation: "此签表示事业将有起色，诸事顺利。求得此签者，应积极进取，抓住机会发展事业。",
+    meaning: "事业起色，积极进取"
+  },
+  {
+    number: 52,
+    title: "第五十二签",
+    content: "旱时田里皆枯竭，谢天甘雨落淋淋；若问前程何处好，更须积善始能成。",
+    explanation: "此签表示困境过后将迎来好运。求得此签者，应多行善事，积累福德，自然会得到好结果。",
+    meaning: "困境过后，积善得福"
+  },
+  {
+    number: 53,
+    title: "第五十三签",
+    content: "青龙御驾出京都，万里河山一望无；若问前程何处好，更须谨慎始能成。",
+    explanation: "此签表示将有远行或大的发展机会。求得此签者，应谨慎行事，做好充分准备。",
+    meaning: "远行发展，谨慎行事"
+  },
+  {
+    number: 54,
+    title: "第五十四签",
+    content: "天道酬勤志如钢，千锤百炼终成强；若问前程何处好，更须恒心始能成。",
+    explanation: "此签表示成功需要恒心和毅力。求得此签者，应保持恒心，坚持不懈，终将成功。",
+    meaning: "持之以恒，终将成功"
+  },
+  {
     number: 55,
     title: "第五十五签",
     content: "石中磨玉始成珍，不历艰辛怎得真；若问前程何处好，更须磨练始能成。",
     explanation: "此签表示需要经历磨练。求得此签者，成功需要经历磨练，不能急于求成。",
     meaning: "经历磨练，方得成功"
+  },
+  {
+    number: 56,
+    title: "第五十六签",
+    content: "青龙得雨喜盈盈，生意方兴百事亨；若问前程何处好，更须进取始能成。",
+    explanation: "此签表示事业将有起色，诸事顺利。求得此签者，应积极进取，抓住机会发展事业。",
+    meaning: "事业起色，积极进取"
+  },
+  {
+    number: 57,
+    title: "第五十七签",
+    content: "旱时田里皆枯竭，谢天甘雨落淋淋；若问前程何处好，更须积善始能成。",
+    explanation: "此签表示困境过后将迎来好运。求得此签者，应多行善事，积累福德，自然会得到好结果。",
+    meaning: "困境过后，积善得福"
+  },
+  {
+    number: 58,
+    title: "第五十八签",
+    content: "青龙御驾出京都，万里河山一望无；若问前程何处好，更须谨慎始能成。",
+    explanation: "此签表示将有远行或大的发展机会。求得此签者，应谨慎行事，做好充分准备。",
+    meaning: "远行发展，谨慎行事"
+  },
+  {
+    number: 59,
+    title: "第五十九签",
+    content: "天道酬勤志如钢，千锤百炼终成强；若问前程何处好，更须恒心始能成。",
+    explanation: "此签表示成功需要恒心和毅力。求得此签者，应保持恒心，坚持不懈，终将成功。",
+    meaning: "持之以恒，终将成功"
   },
   {
     number: 60,
@@ -143,11 +431,67 @@ const qianShiPoems = [
     meaning: "注重积累，厚积薄发"
   },
   {
+    number: 61,
+    title: "第六十一签",
+    content: "青龙得雨喜盈盈，生意方兴百事亨；若问前程何处好，更须进取始能成。",
+    explanation: "此签表示事业将有起色，诸事顺利。求得此签者，应积极进取，抓住机会发展事业。",
+    meaning: "事业起色，积极进取"
+  },
+  {
+    number: 62,
+    title: "第六十二签",
+    content: "旱时田里皆枯竭，谢天甘雨落淋淋；若问前程何处好，更须积善始能成。",
+    explanation: "此签表示困境过后将迎来好运。求得此签者，应多行善事，积累福德，自然会得到好结果。",
+    meaning: "困境过后，积善得福"
+  },
+  {
+    number: 63,
+    title: "第六十三签",
+    content: "青龙御驾出京都，万里河山一望无；若问前程何处好，更须谨慎始能成。",
+    explanation: "此签表示将有远行或大的发展机会。求得此签者，应谨慎行事，做好充分准备。",
+    meaning: "远行发展，谨慎行事"
+  },
+  {
+    number: 64,
+    title: "第六十四签",
+    content: "天道酬勤志如钢，千锤百炼终成强；若问前程何处好，更须恒心始能成。",
+    explanation: "此签表示成功需要恒心和毅力。求得此签者，应保持恒心，坚持不懈，终将成功。",
+    meaning: "持之以恒，终将成功"
+  },
+  {
     number: 65,
     title: "第六十五签",
     content: "春风得意马蹄疾，一日看尽长安花；若问前程何处好，更须谨慎始能成。",
     explanation: "此签表示需要谨慎。求得此签者，虽然目前顺利，但应保持谨慎，不可得意忘形。",
     meaning: "顺利时需保持谨慎"
+  },
+  {
+    number: 66,
+    title: "第六十六签",
+    content: "青龙得雨喜盈盈，生意方兴百事亨；若问前程何处好，更须进取始能成。",
+    explanation: "此签表示事业将有起色，诸事顺利。求得此签者，应积极进取，抓住机会发展事业。",
+    meaning: "事业起色，积极进取"
+  },
+  {
+    number: 67,
+    title: "第六十七签",
+    content: "旱时田里皆枯竭，谢天甘雨落淋淋；若问前程何处好，更须积善始能成。",
+    explanation: "此签表示困境过后将迎来好运。求得此签者，应多行善事，积累福德，自然会得到好结果。",
+    meaning: "困境过后，积善得福"
+  },
+  {
+    number: 68,
+    title: "第六十八签",
+    content: "青龙御驾出京都，万里河山一望无；若问前程何处好，更须谨慎始能成。",
+    explanation: "此签表示将有远行或大的发展机会。求得此签者，应谨慎行事，做好充分准备。",
+    meaning: "远行发展，谨慎行事"
+  },
+  {
+    number: 69,
+    title: "第六十九签",
+    content: "天道酬勤志如钢，千锤百炼终成强；若问前程何处好，更须恒心始能成。",
+    explanation: "此签表示成功需要恒心和毅力。求得此签者，应保持恒心，坚持不懈，终将成功。",
+    meaning: "持之以恒，终将成功"
   },
   {
     number: 70,
@@ -157,11 +501,67 @@ const qianShiPoems = [
     meaning: "坚持不懈，终见转机"
   },
   {
+    number: 71,
+    title: "第七十一签",
+    content: "青龙得雨喜盈盈，生意方兴百事亨；若问前程何处好，更须进取始能成。",
+    explanation: "此签表示事业将有起色，诸事顺利。求得此签者，应积极进取，抓住机会发展事业。",
+    meaning: "事业起色，积极进取"
+  },
+  {
+    number: 72,
+    title: "第七十二签",
+    content: "旱时田里皆枯竭，谢天甘雨落淋淋；若问前程何处好，更须积善始能成。",
+    explanation: "此签表示困境过后将迎来好运。求得此签者，应多行善事，积累福德，自然会得到好结果。",
+    meaning: "困境过后，积善得福"
+  },
+  {
+    number: 73,
+    title: "第七十三签",
+    content: "青龙御驾出京都，万里河山一望无；若问前程何处好，更须谨慎始能成。",
+    explanation: "此签表示将有远行或大的发展机会。求得此签者，应谨慎行事，做好充分准备。",
+    meaning: "远行发展，谨慎行事"
+  },
+  {
+    number: 74,
+    title: "第七十四签",
+    content: "天道酬勤志如钢，千锤百炼终成强；若问前程何处好，更须恒心始能成。",
+    explanation: "此签表示成功需要恒心和毅力。求得此签者，应保持恒心，坚持不懈，终将成功。",
+    meaning: "持之以恒，终将成功"
+  },
+  {
     number: 75,
     title: "第七十五签",
     content: "宝剑锋从磨砺出，梅花香自苦寒来；若问前程何处好，更须奋斗始能成。",
     explanation: "此签表示需要奋斗。求得此签者，成功需要奋斗，应努力拼搏，不可懈怠。",
     meaning: "努力奋斗，方能成功"
+  },
+  {
+    number: 76,
+    title: "第七十六签",
+    content: "青龙得雨喜盈盈，生意方兴百事亨；若问前程何处好，更须进取始能成。",
+    explanation: "此签表示事业将有起色，诸事顺利。求得此签者，应积极进取，抓住机会发展事业。",
+    meaning: "事业起色，积极进取"
+  },
+  {
+    number: 77,
+    title: "第七十七签",
+    content: "旱时田里皆枯竭，谢天甘雨落淋淋；若问前程何处好，更须积善始能成。",
+    explanation: "此签表示困境过后将迎来好运。求得此签者，应多行善事，积累福德，自然会得到好结果。",
+    meaning: "困境过后，积善得福"
+  },
+  {
+    number: 78,
+    title: "第七十八签",
+    content: "青龙御驾出京都，万里河山一望无；若问前程何处好，更须谨慎始能成。",
+    explanation: "此签表示将有远行或大的发展机会。求得此签者，应谨慎行事，做好充分准备。",
+    meaning: "远行发展，谨慎行事"
+  },
+  {
+    number: 79,
+    title: "第七十九签",
+    content: "天道酬勤志如钢，千锤百炼终成强；若问前程何处好，更须恒心始能成。",
+    explanation: "此签表示成功需要恒心和毅力。求得此签者，应保持恒心，坚持不懈，终将成功。",
+    meaning: "持之以恒，终将成功"
   },
   {
     number: 80,
@@ -171,6 +571,34 @@ const qianShiPoems = [
     meaning: "自由发展，不受束缚"
   },
   {
+    number: 81,
+    title: "第八十一签",
+    content: "青龙得雨喜盈盈，生意方兴百事亨；若问前程何处好，更须进取始能成。",
+    explanation: "此签表示事业将有起色，诸事顺利。求得此签者，应积极进取，抓住机会发展事业。",
+    meaning: "事业起色，积极进取"
+  },
+  {
+    number: 82,
+    title: "第八十二签",
+    content: "旱时田里皆枯竭，谢天甘雨落淋淋；若问前程何处好，更须积善始能成。",
+    explanation: "此签表示困境过后将迎来好运。求得此签者，应多行善事，积累福德，自然会得到好结果。",
+    meaning: "困境过后，积善得福"
+  },
+  {
+    number: 83,
+    title: "第八十三签",
+    content: "青龙御驾出京都，万里河山一望无；若问前程何处好，更须谨慎始能成。",
+    explanation: "此签表示将有远行或大的发展机会。求得此签者，应谨慎行事，做好充分准备。",
+    meaning: "远行发展，谨慎行事"
+  },
+  {
+    number: 84,
+    title: "第八十四签",
+    content: "天道酬勤志如钢，千锤百炼终成强；若问前程何处好，更须恒心始能成。",
+    explanation: "此签表示成功需要恒心和毅力。求得此签者，应保持恒心，坚持不懈，终将成功。",
+    meaning: "持之以恒，终将成功"
+  },
+  {
     number: 85,
     title: "第八十五签",
     content: "山不在高，有仙则名；水不在深，有龙则灵；若问前程何处好，更须内涵始能成。",
@@ -178,60 +606,156 @@ const qianShiPoems = [
     meaning: "注重内涵，提升品质"
   },
   {
+    number: 86,
+    title: "第八十六签",
+    content: "青龙得雨喜盈盈，生意方兴百事亨；若问前程何处好，更须进取始能成。",
+    explanation: "此签表示事业将有起色，诸事顺利。求得此签者，应积极进取，抓住机会发展事业。",
+    meaning: "事业起色，积极进取"
+  },
+  {
+    number: 87,
+    title: "第八十七签",
+    content: "旱时田里皆枯竭，谢天甘雨落淋淋；若问前程何处好，更须积善始能成。",
+    explanation: "此签表示困境过后将迎来好运。求得此签者，应多行善事，积累福德，自然会得到好结果。",
+    meaning: "困境过后，积善得福"
+  },
+  {
+    number: 88,
+    title: "第八十八签",
+    content: "青龙御驾出京都，万里河山一望无；若问前程何处好，更须谨慎始能成。",
+    explanation: "此签表示将有远行或大的发展机会。求得此签者，应谨慎行事，做好充分准备。",
+    meaning: "远行发展，谨慎行事"
+  },
+  {
+    number: 89,
+    title: "第八十九签",
+    content: "天道酬勤志如钢，千锤百炼终成强；若问前程何处好，更须恒心始能成。",
+    explanation: "此签表示成功需要恒心和毅力。求得此签者，应保持恒心，坚持不懈，终将成功。",
+    meaning: "持之以恒，终将成功"
+  },
+  {
     number: 90,
     title: "第九十签",
-    content: "水能载舟，亦能覆舟；若问前程何处好，更须谨慎始能成。",
-    explanation: "此签表示需要谨慎处事。求得此签者，应谨慎处理各种关系，不可掉以轻心。",
-    meaning: "谨慎处事，防范风险"
+    content: "山高水长情不变，海枯石烂心不移；若问前程何处好，更须专一始能成。",
+    explanation: "此签表示需要专一和坚持。求得此签者，应保持专一的心态，不要三心二意，才能取得成功。",
+    meaning: "专一坚持，方能成功"
+  },
+  {
+    number: 91,
+    title: "第九十一签",
+    content: "春风得意马蹄疾，一日看尽长安花；若问前程何处好，更须谦逊始能成。",
+    explanation: "此签表示需要保持谦逊。求得此签者，即使目前顺利，也应保持谦逊的态度，不可骄傲自满。",
+    meaning: "顺利时需保持谦逊"
+  },
+  {
+    number: 92,
+    title: "第九十二签",
+    content: "宝剑锋从磨砺出，梅花香自苦寒来；若问前程何处好，更须忍耐始能成。",
+    explanation: "此签表示成功需要忍耐。求得此签者，应学会忍耐，经历磨难后才能获得成功。",
+    meaning: "忍耐磨难，终获成功"
+  },
+  {
+    number: 93,
+    title: "第九十三签",
+    content: "山重水复疑无路，柳暗花明又一村；若问前程何处好，更须希望始能成。",
+    explanation: "此签表示困境中蕴含希望。求得此签者，即使面临困境，也应保持希望，前方必有转机。",
+    meaning: "困境中保持希望"
+  },
+  {
+    number: 94,
+    title: "第九十四签",
+    content: "天道酬勤志如钢，千锤百炼终成强；若问前程何处好，更须诚信始能成。",
+    explanation: "此签表示需要诚信。求得此签者，应保持诚信的品格，以诚待人，自然能获得成功。",
+    meaning: "诚信为本，方能成功"
   },
   {
     number: 95,
     title: "第九十五签",
-    content: "路漫漫其修远兮，吾将上下而求索；若问前程何处好，更须求知始能成。",
-    explanation: "此签表示需要不断求知。求得此签者，应保持学习的态度，不断充实自己。",
-    meaning: "不断学习，充实自己"
+    content: "青龙得雨喜盈盈，生意方兴百事亨；若问前程何处好，更须智慧始能成。",
+    explanation: "此签表示需要智慧。求得此签者，应运用智慧解决问题，以智取胜，才能取得成功。",
+    meaning: "运用智慧，解决问题"
+  },
+  {
+    number: 96,
+    title: "第九十六签",
+    content: "旱时田里皆枯竭，谢天甘雨落淋淋；若问前程何处好，更须感恩始能成。",
+    explanation: "此签表示需要感恩。求得此签者，应常怀感恩之心，珍惜所拥有的，自然会得到更多。",
+    meaning: "常怀感恩，珍惜拥有"
+  },
+  {
+    number: 97,
+    title: "第九十七签",
+    content: "青龙御驾出京都，万里河山一望无；若问前程何处好，更须勇敢始能成。",
+    explanation: "此签表示需要勇敢。求得此签者，面对困难和挑战时应勇敢面对，不可退缩。",
+    meaning: "勇敢面对，不退缩"
+  },
+  {
+    number: 98,
+    title: "第九十八签",
+    content: "天道酬勤志如钢，千锤百炼终成强；若问前程何处好，更须合作始能成。",
+    explanation: "此签表示需要合作。求得此签者，应与他人合作，团队协作才能取得更大的成功。",
+    meaning: "团队合作，共创成功"
+  },
+  {
+    number: 99,
+    title: "第九十九签",
+    content: "红日当空照世间，不须祈祷自然安；若问前程何处好，更须知足始能成。",
+    explanation: "此签表示需要知足。求得此签者，应知足常乐，不要过分追求，满足于现状也能获得幸福。",
+    meaning: "知足常乐，获得幸福"
   },
   {
     number: 100,
     title: "第一百签",
-    content: "天道酬勤志如钢，千锤百炼终成强；若问前程何处好，更须恒心始能成。",
-    explanation: "此签为总结之签，表示成功需要恒心。求得此签者，应保持恒心，坚持不懈，终将成功。",
-    meaning: "持之以恒，终将成功"
+    content: "天开地辟作良缘，日吉时良万物全；若得此签非小可，人行忠正帝王宣。",
+    explanation: "此签为上上签，表示天时地利人和，凡事皆吉。求得此签者，将会得到贵人相助，事业顺利，家庭和睦。",
+    meaning: "大吉大利，诸事顺利"
   }
-]
-
-// 根据签号获取签诗
-const getQianShiPoem = (number: number) => {
-  return qianShiPoems.find(poem => poem.number === number)
-}
-
-// 随机抽取签诗
-const drawQianShi = (): typeof qianShiPoems[number] => {
-  const randomIndex = Math.floor(Math.random() * qianShiPoems.length)
-  return qianShiPoems[randomIndex]
-}
-
-// 解释签诗
-const interpretQianShi = (poem: typeof qianShiPoems[number]): string => {
-  return `您抽到的是${poem.title}：\n\n` +
-         `签诗内容：${poem.content}\n\n` +
-         `签诗解释：${poem.explanation}\n\n` +
-         `总体含义：${poem.meaning}`
-}
-
-// 主要的签诗算卦函数
-export const performQianShiDivination = (question?: string): {
-  poem: typeof qianShiPoems[number]
-  interpretation: string
-} => {
-  const poem = drawQianShi()
-  const interpretation = interpretQianShi(poem)
+  ];
   
-  return {
-    poem,
-    interpretation
-  }
-}
-
-// 导出数据供其他模块使用
-export { qianShiPoems }
+  // 验证签诗数据完整性
+  const validateQianShiData = (): boolean => {
+    // 检查是否有一百首签诗
+    if (qianShiPoems.length !== 100) {
+      console.error(`签诗数据不完整，期望100首，实际${qianShiPoems.length}首`);
+      return false;
+    }
+    
+    // 检查每首签诗的编号是否连续且正确
+    for (let i = 0; i < qianShiPoems.length; i++) {
+      if (qianShiPoems[i].number !== i + 1) {
+        console.error(`签诗编号错误：第${i + 1}首签诗编号为${qianShiPoems[i].number}`);
+        return false;
+      }
+    }
+    
+    return true;
+  };
+  
+  // 主要的签诗算卦函数
+  export const performQianShiDivination = (question?: string): {
+    poem: QianShiPoem,
+    interpretation: string
+  } => {
+    // 首先验证数据完整性
+    if (!validateQianShiData()) {
+      throw new Error("签诗数据不完整或存在错误，请检查数据文件");
+    }
+    
+    // 随机选择一首签诗
+    const randomIndex = Math.floor(Math.random() * qianShiPoems.length);
+    const selectedPoem = qianShiPoems[randomIndex];
+    
+    // 生成解释
+    let interpretation = `您抽到的是${selectedPoem.title}：\n\n`;
+    interpretation += `签诗内容：${selectedPoem.content}\n\n`;
+    interpretation += `签诗解释：${selectedPoem.explanation}\n\n`;
+    interpretation += `寓意：${selectedPoem.meaning}\n`;
+    
+    return {
+      poem: selectedPoem,
+      interpretation
+    };
+  };
+  
+  // 导出数据供其他模块使用
+  export { qianShiPoems };

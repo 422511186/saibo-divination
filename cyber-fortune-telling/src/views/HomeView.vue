@@ -12,7 +12,8 @@
         <p>融合传统文化与现代科技的算卦体验</p>
         <router-link to="/divination" class="cyber-button">开始算卦</router-link>
         <!-- 添加测试页面链接 -->
-        <router-link to="/tarot-test" class="cyber-button secondary" style="margin-left: 1rem;">塔罗牌动画测试</router-link>
+        <!-- 隐藏塔罗牌动画测试按钮 -->
+        <!-- <router-link to="/tarot-test" class="cyber-button secondary" style="margin-left: 1rem;">塔罗牌动画测试</router-link> -->
       </div>
       
       <div class="features">
@@ -91,10 +92,12 @@ const features = ref([
   position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start; /* 改为从顶部开始布局 */
+  padding-top: 4rem; /* 添加顶部内边距以避免与固定导航栏重叠 */
   
   @media (max-width: 768px) {
     padding: 1rem;
+    padding-top: 3rem;
   }
 }
 
@@ -147,7 +150,7 @@ const features = ref([
   border-radius: 10px;
   padding: 2rem;
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem; /* 减小间隔 */
   box-shadow: 0 0 20px rgba(188, 19, 254, 0.3);
   backdrop-filter: blur(10px);
   

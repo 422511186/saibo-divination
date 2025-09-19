@@ -74,7 +74,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useDivinationStore } from '../store/divination'
 import { gsap } from 'gsap'
@@ -89,7 +89,8 @@ const route = useRoute()
 const router = useRouter()
 const store = useDivinationStore()
 
-const typeId = route.params.type as string
+// 添加对路由参数变化的监听
+const typeId = computed(() => route.params.type as string)
 const userQuestion = ref('')
 const isProcessing = ref(false)
 const progress = ref(0)
@@ -97,18 +98,36 @@ const animationArea = ref<HTMLElement | null>(null)
 const divinationResult = ref<any>(null)
 const divinationDetails = ref<any>(null)
 
+// 监听路由参数变化
+watch(() => route.params.type, (newType) => {
+  if (!newType) {
+    // 如果没有type参数，重定向到选择页面
+    router.push('/divination')
+  }
+})
+
 const currentDivination = computed(() => {
-  return store.getDivinationTypeById(typeId)
+  // 添加检查确保typeId存在
+  if (!typeId.value) {
+    return null
+  }
+  return store.getDivinationTypeById(typeId.value)
 })
 
 const startDivination = () => {
+  // 检查typeId是否存在
+  if (!typeId.value) {
+    router.push('/divination')
+    return
+  }
+  
   isProcessing.value = true
   progress.value = 0
   divinationResult.value = null
   divinationDetails.value = null
   
   // 对于没有专门动画的算卦类型，使用默认进度条
-  if (typeId !== 'tarot' && typeId !== 'iChing' && typeId !== 'qianShi' && typeId !== 'plumFlower') {
+  if (typeId.value !== 'tarot' && typeId.value !== 'iChing' && typeId.value !== 'qianShi' && typeId.value !== 'plumFlower') {
     // 模拟进度条动画
     const progressInterval = setInterval(() => {
       progress.value += Math.random() * 10
@@ -186,14 +205,20 @@ const onPlumFlowerComplete = (result: { upperYao: number[], lowerYao: number[], 
 }
 
 const completeDivination = () => {
+  // 检查typeId是否存在
+  if (!typeId.value) {
+    router.push('/divination')
+    return
+  }
+  
   // 生成模拟结果
   const result = {
     id: Date.now().toString(),
-    type: typeId,
+    type: typeId.value,
     question: userQuestion.value,
-    result: divinationResult.value || generateResult(typeId),
+    result: divinationResult.value || generateResult(typeId.value),
     timestamp: Date.now(),
-    interpretation: generateInterpretation(typeId),
+    interpretation: generateInterpretation(typeId.value),
     details: divinationDetails.value || {}
   }
   
@@ -201,7 +226,7 @@ const completeDivination = () => {
   store.setResult(result)
   
   // 跳转到结果页面
-  router.push(`/divination/${typeId}/result`)
+  router.push(`/divination/${typeId.value}/result`)
 }
 
 const generateResult = (type: string) => {
@@ -255,7 +280,7 @@ const generateInterpretation = (type: string) => {
 }
 
 const goHome = () => {
-  router.push('/')
+  router.push('/divination')
 }
 
 onMounted(() => {
@@ -327,6 +352,12 @@ onMounted(() => {
 .tarot-animation, .iching-animation, .qianshi-animation, .plumflower-animation {
   width: 100%;
   height: 400px;
+  margin-bottom: 20px;
+}
+
+.qianshi-animation {
+  width: 100%;
+  height: 550px; /* 增加高度以提供更多空间 */
   margin-bottom: 20px;
 }
 

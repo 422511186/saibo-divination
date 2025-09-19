@@ -3,7 +3,7 @@
     <div class="qianshi-container" ref="qianshiContainer">
       <!-- 签筒 -->
       <div v-if="!isDrawing" class="qiantong-section">
-        <div class="qiantong" @click="startDrawing">
+        <div class="qiantong" @click="startDrawing" :class="{ disabled: isDrawing }">
           <div class="qiantong-body">
             <div class="qiantong-top"></div>
             <div class="qiantong-middle"></div>
@@ -100,6 +100,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { gsap } from 'gsap'
+import { performQianShiDivination } from '../utils/divinationAlgorithms/qianShi'
 
 const emit = defineEmits<{
   (e: 'complete', qianNumber: number): void
@@ -118,40 +119,6 @@ const shakeInterval = ref<number | null>(null)
 const showFloatingSticks = ref(false)
 const progressPercent = ref(0)
 
-// 示例签诗数据
-const qianShiData = [
-  {
-    number: 1,
-    title: "第一签 - 上上签",
-    content: "天开地辟作良缘，日吉时良万物全；若得此签非小可，人行忠正帝王宣。",
-    explanation: "此签为上上签，表示天时地利人和，凡事皆吉。求得此签者，将会得到贵人相助，事业顺利，家庭和睦。建议保持正直品格，必将获得成功。"
-  },
-  {
-    number: 5,
-    title: "第五签 - 中签",
-    content: "枯木逢春再发枝，眼前生意胜当时；若逢君子传佳讯，转祸为祥事事宜。",
-    explanation: "此签表示转机将至，枯木逢春。求得此签者，虽然目前处境不佳，但很快会有转机，且会得到贵人相助。建议保持耐心，积极准备迎接机会。"
-  },
-  {
-    number: 10,
-    title: "第十签 - 上签",
-    content: "一朝喜色一番新，富贵荣华萃此身；若问前程何处好，更于云里见麒麟。",
-    explanation: "此签表示将有喜事临门，富贵荣华。求得此签者，前程似锦，会有意想不到的好运。建议把握机会，积极行动以获得更大成就。"
-  },
-  {
-    number: 15,
-    title: "第十五签 - 中下签",
-    content: "行人涉水定安然，舟楫留连作恶缘；若问前程何处好，更须守旧待时迁。",
-    explanation: "此签表示目前进展缓慢，需要耐心等待。求得此签者，不宜急进，应保持现状，等待时机。建议保持谨慎，避免冒险行为。"
-  },
-  {
-    number: 20,
-    title: "第二十签 - 中签",
-    content: "神明降笔写忠诚，守旧营为百事亨；若问前程何处好，更须进步始能成。",
-    explanation: "此签表示需要积极进取。求得此签者，虽然目前情况稳定，但要取得更大成就，需要积极进取。建议在保持稳定的基础上寻求突破。"
-  }
-]
-
 const drawProgressText = computed(() => {
   if (drawStep.value === 0) return "虔诚祈祷中..."
   if (drawStep.value === 1) return "摇动签筒中..."
@@ -167,6 +134,9 @@ const getFloatingStickStyle = (index: number) => {
 }
 
 const startDrawing = () => {
+  // 防止重复点击
+  if (isDrawing.value) return
+  
   isDrawing.value = true
   drawStep.value = 0
   progressPercent.value = 0
@@ -190,14 +160,23 @@ const startDrawing = () => {
       drawStep.value = 2
       progressPercent.value = 70
       
-      // 随机选择一个签诗
-      const randomIndex = Math.floor(Math.random() * qianShiData.length)
-      const selectedQian = qianShiData[randomIndex]
-      
-      qianNumber.value = selectedQian.number
-      qianTitle.value = selectedQian.title
-      qianContent.value = selectedQian.content
-      qianExplanation.value = selectedQian.explanation
+      // 使用真实的签诗算法
+      try {
+        const result = performQianShiDivination()
+        const selectedQian = result.poem
+        
+        qianNumber.value = selectedQian.number
+        qianTitle.value = selectedQian.title
+        qianContent.value = selectedQian.content
+        qianExplanation.value = selectedQian.explanation
+      } catch (error) {
+        console.error("签诗抽取失败:", error)
+        // 使用默认签诗
+        qianNumber.value = 1
+        qianTitle.value = "第一签 - 上上签"
+        qianContent.value = "天开地辟作良缘，日吉时良万物全；若得此签非小可，人行忠正帝王宣。"
+        qianExplanation.value = "此签为上上签，表示天时地利人和，凡事皆吉。求得此签者，将会得到贵人相助，事业顺利，家庭和睦。"
+      }
       
       setTimeout(() => {
         isDrawing.value = false
@@ -206,7 +185,7 @@ const startDrawing = () => {
         progressPercent.value = 100
         
         // 发送完成事件
-        emit('complete', selectedQian.number)
+        emit('complete', qianNumber.value)
       }, 2000)
     }, 4000)
   }, 1500)
@@ -250,24 +229,33 @@ onUnmounted(() => {
   justify-content: center;
   align-items: center;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .qianshi-container {
   position: relative;
   width: 100%;
-  height: 400px;
+  height: 550px;
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1;
 }
 
-.qiantong-section {
-  text-align: center;
+.qiantong-section,
+.drawing-animation,
+.result-section,
+.poem-section {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
+  /* 保持所有状态在同一位置 */
 }
 
 .qiantong {
@@ -277,6 +265,11 @@ onUnmounted(() => {
   cursor: pointer;
   perspective: 1000px;
   position: relative;
+  
+  &.disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
 }
 
 .qiantong-body {

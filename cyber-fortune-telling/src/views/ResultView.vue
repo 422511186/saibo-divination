@@ -1,9 +1,5 @@
 <template>
   <div class="result-view">
-    <div class="cyber-header">
-      <h1 class="cyber-title">{{ currentDivination?.name }}结果</h1>
-    </div>
-    
     <div class="content">
       <div class="result-container">
         <!-- 3D背景动画 -->
@@ -92,9 +88,13 @@
           <button class="cyber-button secondary" @click="shareResult">
             分享结果
           </button>
-          <router-link :to="`/divination/${currentResult?.type}/process`" class="cyber-button secondary">
+          <button 
+            v-if="typeId" 
+            class="cyber-button secondary" 
+            @click="divineAgain"
+          >
             再算一次
-          </router-link>
+          </button>
           <button class="cyber-button secondary" @click="goHome">
             返回主页
           </button>
@@ -117,10 +117,29 @@ const router = useRouter()
 const divinationStore = useDivinationStore()
 const historyStore = useHistoryStore()
 
-const typeId = route.params.type as string
+// 从路由参数和store中获取typeId
+const typeId = computed(() => {
+  // 优先使用路由参数
+  const routeType = route.params.type as string
+  if (routeType) {
+    return routeType
+  }
+  
+  // 如果路由参数不存在，尝试从结果中获取
+  const resultType = divinationStore.currentResult?.type
+  if (resultType) {
+    return resultType
+  }
+  
+  // 如果都不存在，返回默认值
+  return ''
+})
 
 const currentDivination = computed(() => {
-  return divinationStore.getDivinationTypeById(typeId)
+  if (!typeId.value) {
+    return null
+  }
+  return divinationStore.getDivinationTypeById(typeId.value)
 })
 
 const currentResult = computed(() => {
@@ -134,7 +153,7 @@ const getResultIcon = () => {
     qianShi: '🎋',
     plumFlower: '🌸'
   }
-  return icons[typeId] || '🔮'
+  return icons[typeId.value] || '🔮'
 }
 
 const getYaoPosition = (index: number) => {
@@ -198,8 +217,18 @@ const shareResult = () => {
   }
 }
 
+const divineAgain = () => {
+  // 检查typeId是否存在
+  if (typeId.value) {
+    router.push(`/divination/${typeId.value}/process`)
+  } else {
+    // 如果typeId不存在，重定向到选择页面
+    router.push('/divination')
+  }
+}
+
 const goHome = () => {
-  router.push('/')
+  router.push('/divination')
 }
 </script>
 
@@ -212,6 +241,7 @@ const goHome = () => {
   height: 100%;
   z-index: -1;
   opacity: 0.3;
+  pointer-events: none; /* 确保背景不会拦截点击事件 */
 }
 
 .result-view {
@@ -219,23 +249,6 @@ const goHome = () => {
   min-height: 100vh;
   background: linear-gradient(135deg, #0c0c14 0%, #141428 100%);
   position: relative;
-}
-
-.cyber-header {
-  text-align: center;
-  margin-bottom: 3rem;
-  position: relative;
-  z-index: 1;
-}
-
-.cyber-title {
-  font-size: 2.5rem;
-  font-weight: 700;
-  background: linear-gradient(90deg, #bc13fe, #00f0ff, #ff00ff);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-shadow: 0 0 10px rgba(188, 19, 254, 0.5);
-  margin-bottom: 1rem;
 }
 
 .result-container {
@@ -393,5 +406,3 @@ const goHome = () => {
   background: rgba(0, 240, 255, 0.1);
   box-shadow: 0 5px 20px rgba(0, 240, 255, 0.5);
 }
-
-</style>
