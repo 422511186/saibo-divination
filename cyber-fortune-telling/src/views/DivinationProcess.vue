@@ -22,9 +22,15 @@
           <div v-else class="processing">
             <!-- 根据算卦类型显示不同的动画 -->
             <div v-if="typeId === 'tarot'" class="tarot-animation">
-              <TarotCardAnimation 
+              <EnhancedTarotCardAnimation 
                 :card-count="3" 
+                :enable-enhanced-animation="true"
+                :particle-effects="true"
+                animation-speed="normal"
                 @complete="onTarotComplete"
+                @animationStart="handleAnimationStart"
+                @animationComplete="handleAnimationComplete"
+                @particleComplete="handleParticleComplete"
               />
             </div>
             
@@ -74,6 +80,7 @@ import { useDivinationStore } from '../store/divination'
 import { gsap } from 'gsap'
 import Cyber3DAnimation from '../components/Cyber3DAnimation.vue'
 import TarotCardAnimation from '../components/TarotCardAnimation.vue'
+import EnhancedTarotCardAnimation from '../components/EnhancedTarotCardAnimation.vue'
 import IChingAnimation from '../components/IChingAnimation.vue'
 import QianShiAnimation from '../components/QianShiAnimation.vue'
 import PlumFlowerAnimation from '../components/PlumFlowerAnimation.vue'
@@ -126,6 +133,19 @@ const onTarotComplete = (cards: {number: number, suit: number}[]) => {
   setTimeout(() => {
     completeDivination()
   }, 2000)
+}
+
+// 增强版塔罗牌动画事件处理
+const handleAnimationStart = () => {
+  console.log('塔罗牌动画开始')
+}
+
+const handleAnimationComplete = () => {
+  console.log('塔罗牌动画完成')
+}
+
+const handleParticleComplete = () => {
+  console.log('粒子效果完成')
 }
 
 const onIChingComplete = (result: { yao: number[], changingLines: boolean[], hexagramNumber: number }) => {

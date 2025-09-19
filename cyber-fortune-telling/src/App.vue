@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
+import CyberHeader from './components/CyberHeader.vue'
 </script>
 
 <template>
   <div class="app">
+    <CyberHeader />
     <RouterView />
   </div>
 </template>

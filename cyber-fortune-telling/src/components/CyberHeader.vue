@@ -60,6 +60,12 @@ const isActive = (path: string) => {
   justify-content: space-between;
   align-items: center;
   padding: 0 2rem;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 0 1rem;
+  }
 }
 
 .logo-text {
@@ -69,11 +75,21 @@ const isActive = (path: string) => {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   text-shadow: 0 0 10px rgba(188, 19, 254, 0.5);
+  
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+  }
 }
 
 .navigation {
   display: flex;
   gap: 2rem;
+  
+  @media (max-width: 768px) {
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
 }
 
 .nav-link {
@@ -84,6 +100,12 @@ const isActive = (path: string) => {
   border-radius: 5px;
   transition: all 0.3s ease;
   position: relative;
+  white-space: nowrap;
+  
+  @media (max-width: 768px) {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
+  }
 }
 
 .nav-link:hover {

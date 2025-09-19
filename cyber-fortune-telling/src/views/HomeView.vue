@@ -7,16 +7,12 @@
     
     <!-- 主要内容 -->
     <div class="content">
-      <div class="cyber-header">
-        <h1 class="cyber-title glitch" data-text="赛博算卦">赛博算卦</h1>
-        <p class="cyber-subtitle">融合传统智慧与现代科技的算卦体验</p>
-      </div>
-      
       <div class="intro-card">
         <h2>欢迎来到赛博算卦</h2>
-        <p>在这里，您可以体验各种传统的算卦方式，结合现代科技的力量，为您提供独特的占卜体验。</p>
+        <p>融合传统文化与现代科技的算卦体验</p>
         <router-link to="/divination" class="cyber-button">开始算卦</router-link>
-        <router-link to="/history" class="cyber-button secondary" style="margin-left: 1rem;">查看历史记录</router-link>
+        <!-- 添加测试页面链接 -->
+        <router-link to="/tarot-test" class="cyber-button secondary" style="margin-left: 1rem;">塔罗牌动画测试</router-link>
       </div>
       
       <div class="features">
@@ -93,6 +89,13 @@ const features = ref([
   min-height: 100vh;
   background: linear-gradient(135deg, #0c0c14 0%, #141428 100%);
   position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
 }
 
 .cyber-header {
@@ -110,12 +113,20 @@ const features = ref([
   -webkit-text-fill-color: transparent;
   text-shadow: 0 0 10px rgba(188, 19, 254, 0.5);
   margin-bottom: 1rem;
+  
+  @media (max-width: 768px) {
+    font-size: 2rem;
+  }
 }
 
 .cyber-subtitle {
   font-size: 1.2rem;
   color: #00f0ff;
   text-shadow: 0 0 5px rgba(0, 240, 255, 0.5);
+  
+  @media (max-width: 768px) {
+    font-size: 1rem;
+  }
 }
 
 .content {
@@ -123,6 +134,11 @@ const features = ref([
   margin: 0 auto;
   position: relative;
   z-index: 1;
+  width: 100%;
+  
+  @media (max-width: 768px) {
+    padding: 0 1rem;
+  }
 }
 
 .intro-card {
@@ -134,6 +150,10 @@ const features = ref([
   margin-bottom: 3rem;
   box-shadow: 0 0 20px rgba(188, 19, 254, 0.3);
   backdrop-filter: blur(10px);
+  
+  @media (max-width: 768px) {
+    padding: 1.5rem;
+  }
 }
 
 .intro-card h2 {
@@ -146,6 +166,10 @@ const features = ref([
   margin-bottom: 2rem;
   font-size: 1.1rem;
   line-height: 1.6;
+  
+  @media (max-width: 768px) {
+    font-size: 1rem;
+  }
 }
 
 .cyber-button {
@@ -158,6 +182,13 @@ const features = ref([
   border-radius: 30px;
   transition: all 0.3s ease;
   box-shadow: 0 0 15px rgba(188, 19, 254, 0.5);
+  margin: 0 0.5rem;
+  
+  @media (max-width: 768px) {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+    margin: 0.5rem;
+  }
 }
 
 .cyber-button:hover {
@@ -181,6 +212,11 @@ const features = ref([
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 2rem;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
 }
 
 .feature-card {
@@ -192,6 +228,10 @@ const features = ref([
   transition: transform 0.3s ease;
   box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
   backdrop-filter: blur(5px);
+  
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
 }
 
 .feature-card:hover {
@@ -202,16 +242,28 @@ const features = ref([
 .feature-icon {
   font-size: 2.5rem;
   margin-bottom: 1rem;
+  
+  @media (max-width: 768px) {
+    font-size: 2rem;
+  }
 }
 
 .feature-card h3 {
   color: #ff00ff;
   margin-bottom: 0.5rem;
+  
+  @media (max-width: 768px) {
+    font-size: 1.2rem;
+  }
 }
 
 .feature-card p {
   color: #00f0ff;
   font-size: 0.9rem;
   line-height: 1.5;
+  
+  @media (max-width: 768px) {
+    font-size: 0.8rem;
+  }
 }
 </style>
