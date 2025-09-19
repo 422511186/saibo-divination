@@ -138,6 +138,8 @@ const startDrawing = () => {
   if (isDrawing.value) return
   
   isDrawing.value = true
+  showResult.value = false
+  showPoem.value = false
   drawStep.value = 0
   progressPercent.value = 0
   
@@ -179,16 +181,24 @@ const startDrawing = () => {
       }
       
       setTimeout(() => {
-        isDrawing.value = false
-        showResult.value = true
         drawStep.value = 3
         progressPercent.value = 100
         
-        // 发送完成事件
-        emit('complete', qianNumber.value)
-      }, 2000)
-    }, 4000)
-  }, 1500)
+        // 短暂延迟后再显示结果
+        setTimeout(() => {
+          showResult.value = true
+          
+          // 发送完成事件
+          emit('complete', qianNumber.value)
+          
+          // 完成后再设置isDrawing为false，防止重复点击
+          setTimeout(() => {
+            isDrawing.value = false
+          }, 500)
+        }, 1000)
+      }, 1500)
+    }, 3000)
+  }, 1000)
 }
 
 const startShaking = () => {

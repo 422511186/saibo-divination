@@ -51,13 +51,43 @@
                       </div>
                     </div>
                   </div>
-                  <div v-else-if="currentResult.type === 'qianShi'">
-                    <p>签号: {{ currentResult.result.signNumber }}</p>
+                  <div v-else-if="currentResult.type === 'qianShi'" class="qianshi-card">
+                    <div class="qianshi-header">
+                      <div class="qian-symbol">筶</div>
+                      <div class="qian-number">第{{ currentResult.result.signNumber }}签</div>
+                    </div>
+                    <div v-if="currentResult.details && currentResult.details.poemData">
+                      <div class="qian-rank" :class="getRankClass(currentResult.details.poemData.rank)">
+                        {{ getRankText(currentResult.details.poemData.rank) }}
+                      </div>
+                      <div class="qian-preview">
+                        "{{ getPreviewText(currentResult.details.poemData.content) }}"
+                      </div>
+                    </div>
                   </div>
                   <div v-else-if="currentResult.type === 'plumFlower'">
-                    <p>上卦: {{ currentResult.result.upperYao.join('') }}</p>
-                    <p>下卦: {{ currentResult.result.lowerYao.join('') }}</p>
-                    <p>卦象编号: {{ currentResult.result.hexagram }}</p>
+                    <div class="plumflower-card">
+                      <div class="plumflower-header">
+                        <div class="plumflower-symbol">🌸</div>
+                      </div>
+                      <div class="plumflower-details">
+                        <div class="hexagram-yao">
+                          <span class="yao-label">上卦:</span>
+                          <div class="yao-display">
+                            <span v-for="(yao, index) in currentResult.result.upperYao" :key="'upper-' + index" class="yao-symbol" :class="{ yang: yao === 1, yin: yao === 0 }">{{ yao === 1 ? '━' : '━ ━' }}</span>
+                          </div>
+                        </div>
+                        <div class="hexagram-yao">
+                          <span class="yao-label">下卦:</span>
+                          <div class="yao-display">
+                            <span v-for="(yao, index) in currentResult.result.lowerYao" :key="'lower-' + index" class="yao-symbol" :class="{ yang: yao === 1, yin: yao === 0 }">{{ yao === 1 ? '━' : '━ ━' }}</span>
+                          </div>
+                        </div>
+                        <div class="hexagram-number">
+                          卦象编号: {{ currentResult.result.hexagram }}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -198,98 +228,107 @@ const getResultIcon = () => {
   const icons: Record<string, string> = {
     iChing: '🔮',
     tarot: '🃏',
-    qianShi: '🎋',
+    qianShi: '🎴',
     plumFlower: '🌸'
   }
-  return icons[typeId.value] || '🔮'
+  return icons[typeId.value] || '✨'
 }
 
 const getYaoPosition = (index: number) => {
-  const positions = ['初爻', '二爻', '三爻', '四爻', '五爻', '上爻']
-  return positions[index]
+  const positions = ['初九', '九二', '九三', '九四', '九五', '上九']
+  return positions[index] || `第${index + 1}爻`
 }
 
 const getYaoTypeText = (yao: number) => {
-  // 2表示阳爻，3表示阴爻
-  return yao === 2 ? '阳爻 (━━━━━)' : '阴爻 (━ ━ ━)'
+  return yao === 0 ? '阴爻' : '阳爻'
 }
 
-const getCardSymbol = (suit: number) => {
-  // 大阿卡纳牌没有花色
-  if (suit === -1) return '★'
-  const symbols = ['♣', '♦', '♥', '♠']
-  return symbols[suit] || ''
+const getCardSymbol = (suit: string) => {
+  const symbols: Record<string, string> = {
+    major: '⭐',
+    cups: '🍷',
+    swords: '⚔️',
+    wands: '🪄',
+    pentacles: '🪙'
+  }
+  return symbols[suit] || '📜'
 }
 
 const getTarotCardName = (card: any) => {
-  // 如果卡片有name属性，直接使用
-  if (card.name) {
-    return card.name + (card.reversed ? ' (逆位)' : '')
-  }
-  
-  // 大阿卡纳牌 (suit = -1)
-  if (card.suit === -1) {
-    const majorArcana = [
-      '愚者', '魔术师', '女祭司', '皇后', '皇帝', '教皇', '恋人',
-      '战车', '力量', '隐者', '命运之轮', '正义', '倒吊人', '死神',
-      '节制', '恶魔', '塔', '星星', '月亮', '太阳', '审判', '世界'
-    ]
-    return (majorArcana[card.number] || `大阿卡纳${card.number}`) + (card.reversed ? ' (逆位)' : '')
-  }
-  
-  // 小阿卡纳牌
-  const suits = ['♣', '♦', '♥', '♠']
-  const suitSymbol = suits[card.suit] || ''
-  
-  let cardName = ''
-  if (card.number === 1) {
-    cardName = 'A'
-  } else if (card.number > 1 && card.number <= 10) {
-    cardName = card.number.toString()
+  // 检查suit是否存在且不为undefined
+  if (card.suit && card.suit !== undefined) {
+    return `${card.name} (${card.suit})`
   } else {
-    // 将英文J、Q、K改为中文表示
-    const names = ['侍从', '王后', '国王']
-    cardName = names[card.number - 11] || card.number.toString()
+    return card.name
+  }
+}
+
+// 签诗相关方法
+const getRankClass = (rank: string) => {
+  const rankClasses: Record<string, string> = {
+    '上上签': 'rank-very-good',
+    '上中签': 'rank-good',
+    '中签': 'rank-neutral',
+    '下中签': 'rank-bad',
+    '下下签': 'rank-very-bad'
+  }
+  return rankClasses[rank] || 'rank-neutral'
+}
+
+const getRankText = (rank: string) => {
+  // 如果rank存在，直接返回
+  if (rank) return rank
+  
+  // 如果没有rank，尝试从poemData中推断等级
+  if (currentResult.value && currentResult.value.details && currentResult.value.details.poemData) {
+    const poemData = currentResult.value.details.poemData
+    const meaning = poemData.meaning || ''
+    
+    // 根据含义内容推断等级
+    if (meaning.includes('大吉') || meaning.includes('上上')) {
+      return '上上签'
+    } else if (meaning.includes('吉') || meaning.includes('顺利')) {
+      return '上中签'
+    } else if (meaning.includes('中吉') || meaning.includes('平稳')) {
+      return '中签'
+    } else if (meaning.includes('凶') || meaning.includes('困难')) {
+      return '下中签'
+    } else if (meaning.includes('大凶')) {
+      return '下下签'
+    }
   }
   
-  return `${suitSymbol}${cardName}` + (card.reversed ? ' (逆位)' : '')
+  // 如果无法推断，返回默认值
+  return '未知等级'
+}
+
+const getPreviewText = (content: string) => {
+  if (!content) return ''
+  // 取前30个字符作为预览
+  return content.length > 30 ? content.substring(0, 30) + '...' : content
 }
 
 const saveToHistory = () => {
-  if (currentResult.value) {
-    historyStore.addRecord(currentResult.value)
-    alert('结果已保存到历史记录')
+  if (!currentResult.value) {
+    return
   }
+  historyStore.addRecord(currentResult.value)
+  // 显示保存成功提示
+  alert('已保存到历史记录')
 }
 
 const shareResult = () => {
-  if (currentResult.value) {
-    const text = `我在赛博算卦网站进行了${currentDivination.value?.name}，结果是：${currentResult.value.interpretation}`
-    if (navigator.share) {
-      navigator.share({
-        title: '赛博算卦结果',
-        text: text
-      })
-    } else {
-      // 复制到剪贴板
-      navigator.clipboard.writeText(text)
-      alert('结果已复制到剪贴板')
-    }
-  }
+  // 实现分享功能
+  alert('分享功能开发中')
 }
 
 const divineAgain = () => {
-  // 检查typeId是否存在
-  if (typeId.value) {
-    router.push(`/divination/${typeId.value}/process`)
-  } else {
-    // 如果typeId不存在，重定向到选择页面
-    router.push('/divination')
-  }
+  // 修正路由路径，添加/process后缀
+  router.push(`/divination/${typeId.value}/process`)
 }
 
 const goHome = () => {
-  router.push('/divination')
+  router.push('/')
 }
 </script>
 
@@ -401,13 +440,10 @@ const goHome = () => {
   font-size: 0.9rem;
   font-weight: bold;
   color: #4b0082;
-  text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
 }
 
 .result-right {
-  flex: 2;
-  display: flex;
-  flex-direction: column;
+  flex: 1;
 }
 
 .result-right h2 {
@@ -543,5 +579,214 @@ const goHome = () => {
 .cyber-button.secondary:hover {
   background: rgba(0, 240, 255, 0.1);
   box-shadow: 0 5px 20px rgba(0, 240, 255, 0.5);
+}
+
+/* 签诗卡片样式 */
+.qianshi-card {
+  background: linear-gradient(135deg, #1a1a3a, #2a2a4a);
+  border: 2px solid #ffd700;
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+  width: 100%;
+  max-width: 300px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.qianshi-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent 48%, rgba(255, 215, 0, 0.1) 49%, rgba(255, 215, 0, 0.1) 51%, transparent 52%);
+  animation: qianshiShimmer 3s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes qianshiShimmer {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.qian-symbol {
+  font-size: 3rem;
+  margin-bottom: 15px;
+  color: #ffd700;
+  text-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
+  animation: float 4s ease-in-out infinite;
+}
+
+.qian-number {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #ffd700;
+  margin-bottom: 10px;
+  background: rgba(255, 215, 0, 0.1);
+  padding: 5px 15px;
+  border-radius: 20px;
+  border: 1px solid #ffd700;
+  display: inline-block;
+}
+
+.qian-rank {
+  font-size: 1rem;
+  font-weight: bold;
+  margin-bottom: 15px;
+  padding: 5px 15px;
+  border-radius: 20px;
+  border: 1px solid;
+  display: inline-block;
+}
+
+.qian-rank.rank-upper {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 140, 0, 0.2));
+  border-color: #ffd700;
+  color: #ffd700;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
+}
+
+.qian-rank.rank-middle {
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(0, 191, 255, 0.2));
+  border-color: #00f0ff;
+  color: #00f0ff;
+  text-shadow: 0 0 10px rgba(0, 240, 255, 0.7);
+}
+
+.qian-rank.rank-lower {
+  background: linear-gradient(135deg, rgba(255, 69, 0, 0.2), rgba(255, 99, 71, 0.2));
+  border-color: #ff6347;
+  color: #ff6347;
+  text-shadow: 0 0 10px rgba(255, 99, 71, 0.7);
+}
+
+.qian-rank.rank-unknown {
+  background: linear-gradient(135deg, rgba(128, 128, 128, 0.2), rgba(169, 169, 169, 0.2));
+  border-color: #a9a9a9;
+  color: #a9a9a9;
+  text-shadow: 0 0 10px rgba(169, 169, 169, 0.7);
+}
+
+.qian-preview {
+  font-style: italic;
+  color: #00f0ff;
+  font-size: 1rem;
+  line-height: 1.4;
+  padding: 10px;
+  background: rgba(8, 8, 16, 0.3);
+  border-radius: 8px;
+  border-left: 3px solid #00f0ff;
+}
+
+/* 浮动动画 */
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+/* 梅花易数卡片样式 */
+.plumflower-card {
+  width: 100%;
+  background: linear-gradient(135deg, rgba(188, 19, 254, 0.1), rgba(0, 240, 255, 0.1));
+  border: 2px solid #bc13fe;
+  border-radius: 10px;
+  padding: 1.5rem;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(188, 19, 254, 0.2), 0 0 40px rgba(0, 240, 255, 0.1);
+  backdrop-filter: blur(5px);
+  transition: all 0.3s ease;
+}
+
+.plumflower-card:hover {
+  box-shadow: 0 0 30px rgba(188, 19, 254, 0.3), 0 0 60px rgba(0, 240, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.plumflower-header {
+  margin-bottom: 1rem;
+}
+
+.plumflower-symbol {
+  font-size: 3rem;
+  text-shadow: 0 0 10px #ff00ff, 0 0 20px #00ffff;
+  animation: float 3s ease-in-out infinite;
+}
+
+.plumflower-details {
+  color: #00f0ff;
+}
+
+.hexagram-yao {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.yao-label {
+  font-size: 0.9rem;
+  color: #bc13fe;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.yao-display {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+}
+
+.yao-symbol {
+  font-size: 1.2rem;
+  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.yao-symbol.yang {
+  color: #ff00ff;
+  text-shadow: 0 0 10px #ff00ff;
+  background: rgba(255, 0, 255, 0.1);
+  border: 1px solid #ff00ff;
+}
+
+.yao-symbol.yin {
+  color: #00ffff;
+  text-shadow: 0 0 10px #00ffff;
+  background: rgba(0, 255, 255, 0.1);
+  border: 1px solid #00ffff;
+}
+
+.yao-symbol:hover {
+  transform: scale(1.1);
+}
+
+.hexagram-number {
+  margin-top: 1rem;
+  font-size: 1.1rem;
+  color: #ffd700;
+  text-shadow: 0 0 5px #ffd700;
+  font-weight: bold;
+  background: rgba(255, 215, 0, 0.1);
+  padding: 8px 15px;
+  border-radius: 20px;
+  border: 1px solid #ffd700;
 }
 </style>
