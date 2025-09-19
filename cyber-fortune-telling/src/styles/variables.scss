@@ -1,0 +1,46 @@
+// 赛博朋克风格颜色变量
+
+// 霓虹色系
+$neon-purple: #bc13fe;
+$neon-blue: #00f0ff;
+$neon-pink: #ff00ff;
+$neon-green: #39ff14;
+$neon-yellow: #ffff00;
+
+// 背景色系
+$cyber-dark: #0c0c14;
+$cyber-darker: #080810;
+$cyber-panel: #141428;
+$cyber-card: #1a1a3a;
+
+// 文本颜色
+$text-primary: #00f0ff;
+$text-secondary: #ff00ff;
+$text-accent: #ffff00;
+$text-dark: #080810;
+
+// 透明度
+$glow-opacity: 0.7;
+$overlay-opacity: 0.7;
+$disabled-opacity: 0.5;
+
+// 边框颜色
+$border-purple: #bc13fe;
+$border-blue: #00f0ff;
+$border-pink: #ff00ff;
+
+// 阴影效果
+$glow-purple: 0 0 15px rgba($neon-purple, $glow-opacity);
+$glow-blue: 0 0 15px rgba($neon-blue, $glow-opacity);
+$glow-pink: 0 0 15px rgba($neon-pink, $glow-opacity);
+
+// 渐变背景
+$gradient-purple-blue: linear-gradient(90deg, $neon-purple, $neon-blue);
+$gradient-blue-pink: linear-gradient(90deg, $neon-blue, $neon-pink);
+$gradient-purple-pink: linear-gradient(90deg, $neon-purple, $neon-pink);
+$gradient-dark: linear-gradient(135deg, $cyber-dark 0%, $cyber-panel 100%);
+
+// 动画时长
+$transition-fast: 0.2s;
+$transition-normal: 0.3s;
+$transition-slow: 0.5s;

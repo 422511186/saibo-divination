@@ -1,0 +1,397 @@
+<template>
+  <div class="result-view">
+    <div class="cyber-header">
+      <h1 class="cyber-title">{{ currentDivination?.name }}结果</h1>
+    </div>
+    
+    <div class="content">
+      <div class="result-container">
+        <!-- 3D背景动画 -->
+        <div class="result-3d-background">
+          <Cyber3DAnimation />
+        </div>
+        
+        <!-- 结果展示区域 -->
+        <div class="result-display">
+          <div class="result-content" v-if="currentResult">
+            <div class="result-main">
+              <div class="result-icon">{{ getResultIcon() }}</div>
+              <div class="result-details">
+                <h2>算卦结果</h2>
+                <div class="result-data" v-if="currentResult.result">
+                  <div v-if="currentResult.type === 'iChing'">
+                    <p>卦象编号: {{ currentResult.result.hexagram }}</p>
+                    <p>变爻: {{ currentResult.result.changingLines.filter(Boolean).length }} 个</p>
+                    <!-- 显示六爻详情 -->
+                    <div class="yao-details" v-if="currentResult.details && currentResult.details.yao">
+                      <h3>六爻详情</h3>
+                      <div class="yao-list">
+                        <div 
+                          v-for="(yao, index) in currentResult.details.yao" 
+                          :key="index" 
+                          class="yao-item"
+                          :class="{ changing: currentResult.details.changingLines && currentResult.details.changingLines[index] }"
+                        >
+                          <span class="yao-position">{{ getYaoPosition(index) }}</span>
+                          <span class="yao-type">{{ getYaoTypeText(yao) }}</span>
+                          <span class="yao-changing" v-if="currentResult.details.changingLines && currentResult.details.changingLines[index]">变爻</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <!-- 详细的卦象解释 -->
+                    <div class="hexagram-detail-section">
+                      <HexagramDetail 
+                        :hexagram-number="currentResult.result.hexagram"
+                        :yao-values="currentResult.details?.yao"
+                        :changing-lines="currentResult.details?.changingLines"
+                      />
+                    </div>
+                  </div>
+                  <div v-else-if="currentResult.type === 'tarot'">
+                    <p>抽到的牌:</p>
+                    <ul class="tarot-cards-list">
+                      <li v-for="(card, index) in currentResult.result.cards" :key="index">
+                        {{ getTarotCardName(card) }}
+                      </li>
+                    </ul>
+                  </div>
+                  <div v-else-if="currentResult.type === 'qianShi'">
+                    <p>签号: {{ currentResult.result.signNumber }}</p>
+                  </div>
+                  <div v-else-if="currentResult.type === 'plumFlower'">
+                    <p>上卦: {{ currentResult.result.upperYao.join('') }}</p>
+                    <p>下卦: {{ currentResult.result.lowerYao.join('') }}</p>
+                    <p>卦象编号: {{ currentResult.result.hexagram }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="interpretation">
+              <h3>结果解读</h3>
+              <p>{{ currentResult.interpretation }}</p>
+            </div>
+            
+            <div class="user-question" v-if="currentResult.question">
+              <h3>您的问题</h3>
+              <p>{{ currentResult.question }}</p>
+            </div>
+          </div>
+          
+          <div class="no-result" v-else>
+            <p>暂无算卦结果</p>
+          </div>
+        </div>
+        
+        <!-- 操作按钮 -->
+        <div class="result-actions">
+          <button class="cyber-button" @click="saveToHistory">
+            保存到历史记录
+          </button>
+          <button class="cyber-button secondary" @click="shareResult">
+            分享结果
+          </button>
+          <router-link :to="`/divination/${currentResult?.type}/process`" class="cyber-button secondary">
+            再算一次
+          </router-link>
+          <button class="cyber-button secondary" @click="goHome">
+            返回主页
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useDivinationStore } from '../store/divination'
+import { useHistoryStore } from '../store/history'
+import Cyber3DAnimation from '../components/Cyber3DAnimation.vue'
+import HexagramDetail from '../components/HexagramDetail.vue'
+
+const route = useRoute()
+const router = useRouter()
+const divinationStore = useDivinationStore()
+const historyStore = useHistoryStore()
+
+const typeId = route.params.type as string
+
+const currentDivination = computed(() => {
+  return divinationStore.getDivinationTypeById(typeId)
+})
+
+const currentResult = computed(() => {
+  return divinationStore.currentResult
+})
+
+const getResultIcon = () => {
+  const icons: Record<string, string> = {
+    iChing: '🔮',
+    tarot: '🃏',
+    qianShi: '🎋',
+    plumFlower: '🌸'
+  }
+  return icons[typeId] || '🔮'
+}
+
+const getYaoPosition = (index: number) => {
+  const positions = ['初爻', '二爻', '三爻', '四爻', '五爻', '上爻']
+  return positions[index]
+}
+
+const getYaoTypeText = (yao: number) => {
+  // 2表示阳爻，3表示阴爻
+  return yao === 2 ? '阳爻 (━━━━━)' : '阴爻 (━ ━ ━)'
+}
+
+const getTarotCardName = (card: {number: number, suit: number}) => {
+  // 大阿卡纳牌 (suit = -1)
+  if (card.suit === -1) {
+    const majorArcana = [
+      "愚者", "魔术师", "女祭司", "皇后", "皇帝", "教皇", "恋人",
+      "战车", "力量", "隐者", "命运之轮", "正义", "倒吊人", "死神",
+      "节制", "恶魔", "塔", "星星", "月亮", "太阳", "审判", "世界"
+    ]
+    return majorArcana[card.number] || `大阿卡纳${card.number}`
+  }
+  
+  // 小阿卡纳牌
+  const suits = ['♣', '♦', '♥', '♠']
+  const suitSymbol = suits[card.suit] || ''
+  
+  let cardName = ''
+  if (card.number === 1) {
+    cardName = 'A'
+  } else if (card.number > 1 && card.number <= 10) {
+    cardName = card.number.toString()
+  } else {
+    const names = ["J", "Q", "K"]
+    cardName = names[card.number - 11] || card.number.toString()
+  }
+  
+  return `${suitSymbol}${cardName}`
+}
+
+const saveToHistory = () => {
+  if (currentResult.value) {
+    historyStore.addRecord(currentResult.value)
+    alert('结果已保存到历史记录')
+  }
+}
+
+const shareResult = () => {
+  if (currentResult.value) {
+    const text = `我在赛博算卦网站进行了${currentDivination.value?.name}，结果是：${currentResult.value.interpretation}`
+    if (navigator.share) {
+      navigator.share({
+        title: '赛博算卦结果',
+        text: text
+      })
+    } else {
+      // 复制到剪贴板
+      navigator.clipboard.writeText(text)
+      alert('结果已复制到剪贴板')
+    }
+  }
+}
+
+const goHome = () => {
+  router.push('/')
+}
+</script>
+
+<style scoped lang="scss">
+.result-3d-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  opacity: 0.3;
+}
+
+.result-view {
+  padding: 2rem;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0c0c14 0%, #141428 100%);
+  position: relative;
+}
+
+.cyber-header {
+  text-align: center;
+  margin-bottom: 3rem;
+  position: relative;
+  z-index: 1;
+}
+
+.cyber-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: linear-gradient(90deg, #bc13fe, #00f0ff, #ff00ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 10px rgba(188, 19, 254, 0.5);
+  margin-bottom: 1rem;
+}
+
+.result-container {
+  max-width: 800px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.result-display {
+  background: rgba(20, 20, 40, 0.7);
+  border: 1px solid #bc13fe;
+  border-radius: 10px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 0 20px rgba(188, 19, 254, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+.result-main {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid rgba(188, 19, 254, 0.3);
+}
+
+.result-icon {
+  font-size: 4rem;
+  margin-right: 2rem;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.result-details h2 {
+  color: #ff00ff;
+  margin-bottom: 1rem;
+}
+
+.result-data {
+  color: #00f0ff;
+  font-size: 1.1rem;
+}
+
+.result-data p {
+  margin-bottom: 0.5rem;
+}
+
+.yao-details h3 {
+  color: #ff00ff;
+  margin: 1rem 0 0.5rem 0;
+}
+
+.yao-list {
+  margin-top: 0.5rem;
+}
+
+.yao-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.3rem 0;
+  border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+}
+
+.yao-item.changing {
+  background: rgba(255, 255, 0, 0.1);
+  border-radius: 4px;
+  padding: 0.3rem;
+}
+
+.yao-position {
+  color: #00f0ff;
+  font-weight: bold;
+}
+
+.yao-type {
+  color: #bc13fe;
+}
+
+.yao-changing {
+  color: #ffff00;
+  font-weight: bold;
+}
+
+.hexagram-detail-section {
+  margin-top: 20px;
+}
+
+.tarot-cards-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.tarot-cards-list li {
+  margin-bottom: 0.3rem;
+  padding: 0.2rem 0;
+}
+
+.interpretation {
+  margin-bottom: 2rem;
+}
+
+.interpretation h3, .user-question h3 {
+  color: #ff00ff;
+  margin-bottom: 1rem;
+}
+
+.interpretation p, .user-question p {
+  color: #00f0ff;
+  line-height: 1.6;
+  font-size: 1.1rem;
+}
+
+.result-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
+}
+
+.cyber-button {
+  padding: 12px 25px;
+  background: linear-gradient(90deg, #bc13fe, #00f0ff);
+  color: #0c0c14;
+  font-weight: bold;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+  box-shadow: 0 0 15px rgba(188, 19, 254, 0.5);
+}
+
+.cyber-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 20px rgba(188, 19, 254, 0.8);
+}
+
+.cyber-button.secondary {
+  background: transparent;
+  border: 1px solid #00f0ff;
+  color: #00f0ff;
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+}
+
+.cyber-button.secondary:hover {
+  background: rgba(0, 240, 255, 0.1);
+  box-shadow: 0 5px 20px rgba(0, 240, 255, 0.5);
+}
+
+</style>

@@ -1,0 +1,245 @@
+// 全局样式
+@import 'variables';
+@import 'mixins';
+
+// 重置默认样式
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+// 基础样式
+body {
+  font-family: 'Arial', sans-serif;
+  background: $gradient-dark;
+  color: $text-primary;
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+// 滚动条样式
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: $cyber-darker;
+}
+
+::-webkit-scrollbar-thumb {
+  background: $neon-purple;
+  border-radius: 4px;
+  
+  &:hover {
+    background: $neon-blue;
+  }
+}
+
+// 链接样式
+a {
+  color: $neon-blue;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    color: $neon-pink;
+    text-shadow: 0 0 5px rgba($neon-pink, 0.5);
+  }
+}
+
+// 输入框样式
+input, textarea, select {
+  background: rgba(8, 8, 16, 0.7);
+  border: 1px solid $border-purple;
+  border-radius: 5px;
+  padding: 0.5rem;
+  color: $text-primary;
+  font-family: inherit;
+  
+  &:focus {
+    outline: none;
+    border-color: $neon-blue;
+    box-shadow: 0 0 10px rgba($neon-blue, 0.5);
+  }
+}
+
+// 文本区域样式
+textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+// 标题样式
+h1, h2, h3, h4, h5, h6 {
+  margin-bottom: 1rem;
+  @include gradient-text();
+}
+
+h1 {
+  font-size: 2.5rem;
+}
+
+h2 {
+  font-size: 2rem;
+}
+
+h3 {
+  font-size: 1.5rem;
+  color: $text-secondary;
+}
+
+// 段落样式
+p {
+  margin-bottom: 1rem;
+  color: $text-primary;
+}
+
+// 列表样式
+ul, ol {
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+}
+
+li {
+  margin-bottom: 0.5rem;
+}
+
+// 赛博朋克容器
+.cyber-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+// 赛博朋克网格
+.cyber-grid {
+  display: grid;
+  gap: 2rem;
+  
+  &.grid-cols-1 {
+    grid-template-columns: 1fr;
+  }
+  
+  &.grid-cols-2 {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+  
+  &.grid-cols-3 {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+  
+  @include respond-to(mobile) {
+    gap: 1rem;
+  }
+}
+
+// 赛博朋克面板
+.cyber-panel {
+  @include cyber-card();
+  
+  &.secondary {
+    border-color: $neon-blue;
+    box-shadow: 0 0 15px rgba($neon-blue, 0.2);
+    
+    &:hover {
+      box-shadow: 0 5px 25px rgba($neon-blue, 0.5);
+      border-color: $neon-purple;
+    }
+  }
+}
+
+// 赛博朋克按钮
+.cyber-button {
+  @include cyber-button();
+  
+  &.secondary {
+    background: transparent;
+    border: 1px solid $neon-blue;
+    color: $neon-blue;
+    box-shadow: 0 0 15px rgba($neon-blue, 0.3);
+    
+    &:hover:not(:disabled) {
+      background: rgba($neon-blue, 0.1);
+      box-shadow: 0 5px 20px rgba($neon-blue, 0.5);
+    }
+  }
+  
+  &.ghost {
+    background: transparent;
+    border: 1px solid $neon-purple;
+    color: $neon-purple;
+    box-shadow: 0 0 15px rgba($neon-purple, 0.2);
+    
+    &:hover:not(:disabled) {
+      background: rgba($neon-purple, 0.1);
+      box-shadow: 0 5px 20px rgba($neon-purple, 0.3);
+    }
+  }
+  
+  &.small {
+    padding: 8px 15px;
+    font-size: 0.9rem;
+    border-radius: 20px;
+  }
+  
+  &.large {
+    padding: 15px 35px;
+    font-size: 1.1rem;
+    border-radius: 35px;
+  }
+}
+
+// 赛博朋克标题
+.cyber-title {
+  @include gradient-text();
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  text-align: center;
+  
+  &.glitch {
+    @include glitch-effect();
+  }
+}
+
+// 赛博朋克副标题
+.cyber-subtitle {
+  color: $neon-blue;
+  text-shadow: 0 0 5px rgba($neon-blue, 0.5);
+  font-size: 1.2rem;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+// 赛博朋克加载器
+.cyber-loader {
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba($neon-purple, 0.3);
+  border-top: 5px solid $neon-purple;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// 响应式设计
+@include respond-to(mobile) {
+  .cyber-title {
+    font-size: 2rem;
+  }
+  
+  .cyber-subtitle {
+    font-size: 1rem;
+  }
+  
+  .cyber-button {
+    padding: 10px 20px;
+  }
+}
