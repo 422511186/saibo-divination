@@ -129,7 +129,12 @@ const getResultIcon = (typeId: string) => {
   return icons[typeId] || '🔮'
 }
 
-const getTarotCardName = (card: {number: number, suit: number}) => {
+const getTarotCardName = (card: any) => {
+  // 如果卡片有name属性，直接使用
+  if (card.name) {
+    return card.name + (card.reversed ? ' (逆位)' : '');
+  }
+  
   // 大阿卡纳牌 (suit = -1)
   if (card.suit === -1) {
     const majorArcana = [
@@ -137,24 +142,24 @@ const getTarotCardName = (card: {number: number, suit: number}) => {
       "战车", "力量", "隐者", "命运之轮", "正义", "倒吊人", "死神",
       "节制", "恶魔", "塔", "星星", "月亮", "太阳", "审判", "世界"
     ]
-    return majorArcana[card.number] || `大阿卡纳${card.number}`
+    return (majorArcana[card.number] || `大阿卡纳${card.number}`) + (card.reversed ? ' (逆位)' : '');
   }
   
   // 小阿卡纳牌
-  const suits = ['♣', '♦', '♥', '♠']
-  const suitSymbol = suits[card.suit] || ''
+  const suits = ['♣', '♦', '♥', '♠'];
+  const suitSymbol = suits[card.suit] || '';
   
-  let cardName = ''
+  let cardName = '';
   if (card.number === 1) {
-    cardName = 'A'
+    cardName = 'A';
   } else if (card.number > 1 && card.number <= 10) {
-    cardName = card.number.toString()
+    cardName = card.number.toString();
   } else {
-    const names = ["J", "Q", "K"]
-    cardName = names[card.number - 11] || card.number.toString()
+    const names = ["J", "Q", "K"];
+    cardName = names[card.number - 11] || card.number.toString();
   }
   
-  return `${suitSymbol}${cardName}`
+  return `${suitSymbol}${cardName}` + (card.reversed ? ' (逆位)' : '');
 }
 
 const formatDate = (timestamp: number) => {

@@ -47,9 +47,10 @@
             </div>
 
             <!-- 默认3D动画 -->
-            <Cyber3DAnimation v-else />
+            <Cyber3DAnimation v-else/>
 
-            <div class="progress-info" v-if="typeId !== 'tarot' && typeId !== 'iChing' && typeId !== 'qianShi' && typeId !== 'plumFlower'">
+            <div class="progress-info"
+                 v-if="typeId !== 'tarot' && typeId !== 'iChing' && typeId !== 'qianShi' && typeId !== 'plumFlower'">
               <p>正在计算中...</p>
               <div class="progress-bar">
                 <div class="progress-fill" :style="{ width: progress + '%' }"></div>
@@ -83,6 +84,8 @@ import EnhancedTarotCardAnimation from '../components/EnhancedTarotCardAnimation
 import QianShiAnimation from '../components/QianShiAnimation.vue'
 import PlumFlowerAnimation from '../components/PlumFlowerAnimation.vue'
 import IChingAnimation from "@/components/IChingAnimation.vue";
+import {performIChingDivination} from '../utils/divinationAlgorithms/iChing'
+import {performQianShiDivination} from '../utils/divinationAlgorithms/qianShi'
 
 const route = useRoute()
 const router = useRouter()
@@ -144,10 +147,16 @@ const startDivination = () => {
   }
 }
 
-const onTarotComplete = (cards: { number: number, suit: number }[]) => {
+const onTarotComplete = (cards: any[]) => {
   divinationResult.value = {
     cards: cards
   }
+
+  // 保存塔罗牌详细信息
+  divinationDetails.value = {
+    cardDetails: cards
+  }
+
   setTimeout(() => {
     completeDivination()
   }, 2000)
@@ -172,10 +181,12 @@ const onIChingComplete = (result: { yao: number[], changingLines: boolean[], hex
     changingLines: result.changingLines
   }
 
-  // 保存详细信息
+  // 保存详细信息，包括完整的卦象数据
+  const fullResult = performIChingDivination(userQuestion.value);
   divinationDetails.value = {
     yao: result.yao,
-    changingLines: result.changingLines
+    changingLines: result.changingLines,
+    hexagramData: fullResult.hexagram
   }
 
   setTimeout(() => {
@@ -187,6 +198,13 @@ const onQianShiComplete = (qianNumber: number) => {
   divinationResult.value = {
     signNumber: qianNumber
   }
+
+  // 保存签诗详细信息
+  const fullResult = performQianShiDivination(userQuestion.value);
+  divinationDetails.value = {
+    poemData: fullResult.poem
+  }
+
   setTimeout(() => {
     completeDivination()
   }, 2000)
@@ -198,6 +216,13 @@ const onPlumFlowerComplete = (result: { upperYao: number[], lowerYao: number[], 
     lowerYao: result.lowerYao,
     hexagram: result.hexagramNumber
   }
+
+  // 保存梅花易数详细信息
+  divinationDetails.value = {
+    upperYao: result.upperYao,
+    lowerYao: result.lowerYao
+  }
+
   setTimeout(() => {
     completeDivination()
   }, 2000)
@@ -238,11 +263,16 @@ const generateResult = (type: string) => {
           Math.random() > 0.5, Math.random() > 0.5, Math.random() > 0.5]
       }
     case 'tarot':
+      // 使用真实的塔罗牌数据结构
+      const {allTarotCards} = require('../utils/divinationAlgorithms/tarot');
       return {
-        cards: Array.from({length: 3}, () => ({
-          number: Math.floor(Math.random() * 78) + 1,
-          suit: Math.floor(Math.random() * 4)
-        }))
+        cards: Array.from({length: 3}, () => {
+          const randomCard = allTarotCards[Math.floor(Math.random() * allTarotCards.length)];
+          return {
+            ...randomCard,
+            reversed: Math.random() > 0.7 // 30%概率逆位
+          };
+        })
       }
     case 'qianShi':
       return {
@@ -431,15 +461,15 @@ onMounted(() => {
   .divination-process {
     padding: 1rem;
   }
-  
+
   .tarot-animation, .qianshi-animation, .plumflower-animation {
     height: 350px;
   }
-  
+
   .iching-animation {
     height: 400px; /* 移动端调整为合适的高度 */
   }
-  
+
   .animation-area {
     min-height: 350px;
   }

@@ -36,12 +36,19 @@
                     </div>
                     
                     <!-- 详细的卦象解释 -->
-                    <div class="hexagram-detail-section">
-                      <HexagramDetail 
-                        :hexagram-number="currentResult.result.hexagram"
-                        :yao-values="currentResult.details?.yao"
-                        :changing-lines="currentResult.details?.changingLines"
-                      />
+                    <div class="hexagram-detail-section" v-if="currentResult.details && currentResult.details.hexagramData">
+                      <h3>卦象解释</h3>
+                      <div class="hexagram-info">
+                        <p><strong>卦名:</strong> {{ currentResult.details.hexagramData.chineseName }} ({{ currentResult.details.hexagramData.name }})</p>
+                        <p><strong>卦辞:</strong> {{ currentResult.details.hexagramData.judgment }}</p>
+                        <p><strong>象辞:</strong> {{ currentResult.details.hexagramData.image }}</p>
+                        <div v-if="currentResult.details.changingLines && currentResult.details.changingLines.filter(Boolean).length > 0">
+                          <h4>变爻解释</h4>
+                          <div v-for="(isChanging, index) in currentResult.details.changingLines" :key="index" v-if="isChanging">
+                            <p><strong>{{ getYaoPosition(index) }}:</strong> {{ currentResult.details.hexagramData.lines[index] }}</p>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                   <div v-else-if="currentResult.type === 'tarot'">
@@ -51,14 +58,42 @@
                         {{ getTarotCardName(card) }}
                       </li>
                     </ul>
+                    <!-- 塔罗牌详细解释 -->
+                    <div class="tarot-detail-section" v-if="currentResult.details && currentResult.details.cardDetails">
+                      <h3>牌义解释</h3>
+                      <div v-for="(cardDetail, index) in currentResult.details.cardDetails" :key="index" class="card-detail">
+                        <h4>{{ cardDetail.name }}<span v-if="cardDetail.reversed"> (逆位)</span></h4>
+                        <p><strong>含义:</strong> {{ cardDetail.reversed ? cardDetail.reversed : cardDetail.meaning }}</p>
+                      </div>
+                    </div>
                   </div>
                   <div v-else-if="currentResult.type === 'qianShi'">
                     <p>签号: {{ currentResult.result.signNumber }}</p>
+                    <!-- 签诗详细内容 -->
+                    <div class="qianshi-detail-section" v-if="currentResult.details && currentResult.details.poemData">
+                      <h3>签诗内容</h3>
+                      <div class="poem-content">
+                        <p><strong>签题:</strong> {{ currentResult.details.poemData.title }}</p>
+                        <p><strong>签诗:</strong> {{ currentResult.details.poemData.content }}</p>
+                        <p><strong>解释:</strong> {{ currentResult.details.poemData.explanation }}</p>
+                        <p><strong>寓意:</strong> {{ currentResult.details.poemData.meaning }}</p>
+                      </div>
+                    </div>
                   </div>
                   <div v-else-if="currentResult.type === 'plumFlower'">
                     <p>上卦: {{ currentResult.result.upperYao.join('') }}</p>
                     <p>下卦: {{ currentResult.result.lowerYao.join('') }}</p>
                     <p>卦象编号: {{ currentResult.result.hexagram }}</p>
+                    <!-- 梅花易数卦象解释 -->
+                    <div class="plumflower-detail-section" v-if="currentResult.details && currentResult.details.hexagramData">
+                      <h3>卦象解释</h3>
+                      <div class="hexagram-info">
+                        <p><strong>卦名:</strong> {{ currentResult.details.hexagramData.chineseName }} ({{ currentResult.details.hexagramData.name }})</p>
+                        <p><strong>描述:</strong> {{ currentResult.details.hexagramData.description }}</p>
+                        <p><strong>卦辞:</strong> {{ currentResult.details.hexagramData.judgment }}</p>
+                        <p><strong>象辞:</strong> {{ currentResult.details.hexagramData.image }}</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -166,7 +201,12 @@ const getYaoTypeText = (yao: number) => {
   return yao === 2 ? '阳爻 (━━━━━)' : '阴爻 (━ ━ ━)'
 }
 
-const getTarotCardName = (card: {number: number, suit: number}) => {
+const getTarotCardName = (card: any) => {
+  // 如果卡片有name属性，直接使用
+  if (card.name) {
+    return card.name + (card.reversed ? ' (逆位)' : '');
+  }
+  
   // 大阿卡纳牌 (suit = -1)
   if (card.suit === -1) {
     const majorArcana = [
@@ -174,24 +214,24 @@ const getTarotCardName = (card: {number: number, suit: number}) => {
       "战车", "力量", "隐者", "命运之轮", "正义", "倒吊人", "死神",
       "节制", "恶魔", "塔", "星星", "月亮", "太阳", "审判", "世界"
     ]
-    return majorArcana[card.number] || `大阿卡纳${card.number}`
+    return (majorArcana[card.number] || `大阿卡纳${card.number}`) + (card.reversed ? ' (逆位)' : '');
   }
   
   // 小阿卡纳牌
-  const suits = ['♣', '♦', '♥', '♠']
-  const suitSymbol = suits[card.suit] || ''
+  const suits = ['♣', '♦', '♥', '♠'];
+  const suitSymbol = suits[card.suit] || '';
   
-  let cardName = ''
+  let cardName = '';
   if (card.number === 1) {
-    cardName = 'A'
+    cardName = 'A';
   } else if (card.number > 1 && card.number <= 10) {
-    cardName = card.number.toString()
+    cardName = card.number.toString();
   } else {
-    const names = ["J", "Q", "K"]
-    cardName = names[card.number - 11] || card.number.toString()
+    const names = ["J", "Q", "K"];
+    cardName = names[card.number - 11] || card.number.toString();
   }
   
-  return `${suitSymbol}${cardName}`
+  return `${suitSymbol}${cardName}` + (card.reversed ? ' (逆位)' : '');
 }
 
 const saveToHistory = () => {
