@@ -61,7 +61,7 @@ export const camelToKebab = (str: string): string => {
 
 // 短横线命名转为驼峰命名
 export const kebabToCamel = (str: string): string => {
-  return str.replace(/-([a-z])/g, match => match[1].toUpperCase())
+  return str.replace(/-([a-z])/g, match => match[1] ? match[1].toUpperCase() : '')
 }
 
 // 生成随机ID

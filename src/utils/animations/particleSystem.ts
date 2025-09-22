@@ -1,7 +1,5 @@
 // 粒子系统工具
 
-import { gsap } from 'gsap'
-
 // 粒子配置接口
 export interface ParticleConfig {
   type: 'sparkle' | 'magic' | 'glow' | 'firework'
@@ -37,6 +35,10 @@ class Particle {
     
     // 根据类型设置颜色
     const color = config.color[Math.floor(Math.random() * config.color.length)]
+    if (!color) {
+      throw new Error('Invalid color configuration');
+    }
+    
     switch(config.type) {
       case 'sparkle':
         this.element.style.background = `radial-gradient(circle, ${color}, transparent)`
@@ -121,8 +123,6 @@ export class ParticleSystem {
   private animationId: number | null = null
   private lastTime: number = 0
   private isActive: boolean = false
-  private frameCount: number = 0
-  private readonly maxFrameSkip: number = 5 // 最大跳帧数
   
   constructor(container: HTMLElement) {
     this.container = container
@@ -160,11 +160,13 @@ export class ParticleSystem {
     // 更新所有粒子
     for (let i = this.particles.length - 1; i >= 0; i--) {
       const particle = this.particles[i]
-      particle.update(deltaTime)
-      
-      if (particle.isDead()) {
-        particle.destroy()
-        this.particles.splice(i, 1)
+      if (particle) {
+        particle.update(deltaTime)
+        
+        if (particle.isDead()) {
+          particle.destroy()
+          this.particles.splice(i, 1)
+        }
       }
     }
     

@@ -47,7 +47,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
 import CyberButton from './CyberButton.vue'
 import { useDivinationStore } from '../store/divination'
 import type { DivinationRecord } from '../store/index'
@@ -58,12 +57,12 @@ interface Props {
   emptyText?: string
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   showActions: true,
   emptyText: '暂无历史记录'
 })
 
-const emit = defineEmits<{
+defineEmits<{
   (e: 'view', id: string): void
   (e: 'delete', id: string): void
 }>()

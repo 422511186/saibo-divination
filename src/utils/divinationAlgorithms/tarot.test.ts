@@ -7,7 +7,7 @@ describe('塔罗牌算卦算法测试', () => {
     expect(allTarotCards.length).toBe(78);
     
     // 检查每张牌是否都有number字段
-    allTarotCards.forEach((card, index) => {
+    allTarotCards.forEach(card => {
       expect(card).toHaveProperty('number');
       expect(typeof card.number).toBe('number');
       expect(card.number).toBeGreaterThanOrEqual(0);

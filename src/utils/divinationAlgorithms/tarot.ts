@@ -112,7 +112,9 @@ const shuffleCards = <T>(array: T[]): T[] => {
   const shuffled = [...array]
   for (let i = shuffled.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    const temp = shuffled[i] as T;
+    shuffled[i] = shuffled[j] as T;
+    shuffled[j] = temp;
   }
   return shuffled
 }
@@ -130,8 +132,14 @@ const drawCards = (count: number, reversedChance: number = 0.3): any[] => {
 }
 
 // 解释牌组
-const interpretCards = (cards: any[]): string => {
-  let interpretation = "您抽到的塔罗牌是：\n\n"
+const interpretCards = (cards: any[], question?: string): string => {
+  let interpretation = ""
+  
+  if (question) {
+    interpretation += `针对问题: "${question}"\n\n`
+  }
+  
+  interpretation += "您抽到的塔罗牌是：\n\n"
   
   cards.forEach((card, index) => {
     const position = getPositionMeaning(index, cards.length)
@@ -147,11 +155,11 @@ const getPositionMeaning = (index: number, total: number): string => {
   if (total === 1) return "核心牌"
   if (total === 3) {
     const positions = ["过去", "现在", "未来"]
-    return positions[index]
+    return positions[index] || "未知位置"
   }
   if (total === 5) {
     const positions = ["过去", "现在", "未来", "指导建议", "可能结果"]
-    return positions[index]
+    return positions[index] || "未知位置"
   }
   return `第${index + 1}张牌`
 }
@@ -178,7 +186,7 @@ export const performTarotDivination = (
   }
   
   const cards = drawCards(cardCount)
-  const interpretation = interpretCards(cards)
+  const interpretation = interpretCards(cards, question)
   
   return {
     cards,

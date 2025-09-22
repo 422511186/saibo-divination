@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import type { DivinationRecord } from './index'
-import { loadDivinationHistory, saveDivinationHistory, addHistoryRecord as addHistoryRecordToStorage, removeHistoryRecord as removeHistoryRecordFromStorage, clearHistory as clearHistoryStorage } from '../utils/helpers/storage'
+import { loadDivinationHistory, addHistoryRecord as addHistoryRecordToStorage, removeHistoryRecord as removeHistoryRecordFromStorage, clearHistory as clearHistoryStorage } from '../utils/helpers/storage'
 
 export const useHistoryStore = defineStore('history', {
   state: () => ({

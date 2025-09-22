@@ -84,8 +84,9 @@ import EnhancedTarotCardAnimation from '../components/EnhancedTarotCardAnimation
 import QianShiAnimation from '../components/QianShiAnimation.vue'
 import PlumFlowerAnimation from '../components/PlumFlowerAnimation.vue'
 import IChingAnimation from "@/components/IChingAnimation.vue";
-import {performIChingDivination} from '../utils/divinationAlgorithms/iChing'
-import {performQianShiDivination} from '../utils/divinationAlgorithms/qianShi'
+import { performIChingDivination } from '../utils/divinationAlgorithms/iChing'
+import { performQianShiDivination } from '../utils/divinationAlgorithms/qianShi'
+import { allTarotCards } from '../utils/divinationAlgorithms/tarot'
 
 const route = useRoute()
 const router = useRouter()
@@ -182,7 +183,7 @@ const onIChingComplete = (result: { yao: number[], changingLines: boolean[], hex
   }
 
   // 保存详细信息，包括完整的卦象数据
-  const fullResult = performIChingDivination(userQuestion.value);
+  const fullResult = performIChingDivination();
   divinationDetails.value = {
     yao: result.yao,
     changingLines: result.changingLines,
@@ -200,7 +201,7 @@ const onQianShiComplete = (qianNumber: number) => {
   }
 
   // 保存签诗详细信息
-  const fullResult = performQianShiDivination(userQuestion.value);
+  const fullResult = performQianShiDivination();
   divinationDetails.value = {
     poemData: fullResult.poem
   }
@@ -242,7 +243,7 @@ const completeDivination = () => {
     question: userQuestion.value,
     result: divinationResult.value || generateResult(typeId.value),
     timestamp: Date.now(),
-    interpretation: generateInterpretation(typeId.value),
+    interpretation: generateInterpretation() || '',
     details: divinationDetails.value || {}
   }
 
@@ -264,7 +265,6 @@ const generateResult = (type: string) => {
       }
     case 'tarot':
       // 使用真实的塔罗牌数据结构
-      const {allTarotCards} = require('../utils/divinationAlgorithms/tarot');
       return {
         cards: Array.from({length: 3}, () => {
           const randomCard = allTarotCards[Math.floor(Math.random() * allTarotCards.length)];
@@ -292,7 +292,7 @@ const generateResult = (type: string) => {
   }
 }
 
-const generateInterpretation = (type: string) => {
+const generateInterpretation = () => {
   const interpretations = [
     "这是一个积极的征象，预示着成功和好运即将到来。保持积极的心态，机会就在眼前。",
     "需要保持耐心，时机成熟时自然会有所收获。不要急躁，顺应自然的节奏。",

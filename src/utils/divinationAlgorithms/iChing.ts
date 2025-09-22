@@ -118,7 +118,7 @@ const interpretHexagram = (result: ReturnType<typeof generateHexagram>): string 
 }
 
 // 主要的易经算卦函数
-export const performIChingDivination = (question?: string): {
+export const performIChingDivination = (): {
   hexagram: Hexagram
   yao: number[]
   changingLines: boolean[]

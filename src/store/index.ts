@@ -1,5 +1,3 @@
-import { defineStore } from 'pinia'
-
 // 定义用户设置模型
 export interface UserSettings {
   theme: 'dark' | 'light'

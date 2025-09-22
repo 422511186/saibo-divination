@@ -46,32 +46,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
 import CyberAnimation from '../components/CyberAnimation.vue'
-
-// 特性列表
-const features = ref([
-  {
-    icon: '🔮',
-    title: '易经六十四卦',
-    description: '传统易经算卦方法'
-  },
-  {
-    icon: '🃏',
-    title: '塔罗牌',
-    description: '78张塔罗牌随机抽取'
-  },
-  {
-    icon: '🎋',
-    title: '签诗',
-    description: '传统签诗的数字化抽取'
-  },
-  {
-    icon: '🔢',
-    title: '梅花易数',
-    description: '基于数字和时间的算卦方法'
-  }
-])
 </script>
 
 <style scoped lang="scss">

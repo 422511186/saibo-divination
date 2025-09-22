@@ -44,7 +44,7 @@ describe('签诗算卦算法测试', () => {
 
   // 测试解释功能
   test('签诗解释功能测试', () => {
-    const result = performQianShiDivination("我的感情运势如何？");
+    const result = performQianShiDivination();
     
     // 检查解释是否包含必要的信息
     expect(result.interpretation).toContain('您抽到的是');
@@ -62,11 +62,6 @@ describe('签诗算卦算法测试', () => {
     // 测试不传参数的情况
     expect(() => {
       performQianShiDivination();
-    }).not.toThrow();
-    
-    // 测试传入问题参数的情况
-    expect(() => {
-      performQianShiDivination("这是一个测试问题");
     }).not.toThrow();
   });
 });

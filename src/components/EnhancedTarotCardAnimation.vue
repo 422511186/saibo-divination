@@ -127,7 +127,7 @@ const emit = defineEmits<{
 }>()
 
 // 响应式数据
-const cardCount = props.cardCount || 3
+const cardCount = ref(props.cardCount || 3)
 const isDealing = ref(false)
 const dealtCards = ref<Card[]>([])
 const currentDealStep = ref(0)
@@ -255,7 +255,9 @@ const shuffleCards = <T>(array: T[]): T[] => {
   const shuffled = [...array]
   for (let i = shuffled.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    const temp = shuffled[i] as T
+    shuffled[i] = shuffled[j] as T
+    shuffled[j] = temp
   }
   return shuffled
 }
@@ -325,7 +327,10 @@ const startDeal = async () => {
   
   // 使用组件内的洗牌函数
   const shuffledCards = shuffleCards(allTarotCards.map(card => ({
-    ...card,
+    number: card.number,
+    suit: (card as any).suit !== undefined ? (card as any).suit : -1, // 确保suit属性存在
+    name: card.name,
+    meaning: card.meaning,
     isDealt: false,
     isRevealed: false
   })))
@@ -334,7 +339,10 @@ const startDeal = async () => {
   
   // 初始化要抽取的牌
   dealtCards.value = Array(cardCount.value).fill(null).map((_, i) => ({
-    ...shuffledCards[i],
+    number: shuffledCards[i]?.number || 0,
+    suit: (shuffledCards[i] as any)?.suit !== undefined ? (shuffledCards[i] as any)?.suit : -1, // 默认为大阿卡纳
+    name: shuffledCards[i]?.name || "",
+    meaning: shuffledCards[i]?.meaning || "",
     isDealt: false,
     isRevealed: false
   }))
@@ -348,7 +356,10 @@ const startDeal = async () => {
     const card = allCards.value[i]
     
     dealtCards.value[i] = {
-      ...card,
+      number: card?.number || 0,
+      suit: (card as any)?.suit !== undefined ? (card as any)?.suit : -1, // 默认为大阿卡纳
+      name: card?.name || "",
+      meaning: card?.meaning || "",
       isDealt: true,
       isRevealed: false // 初始时背面朝上
     }
@@ -366,8 +377,11 @@ const startDeal = async () => {
   for (let i = 0; i < cardCount.value; i++) {
     // 为每张牌决定是否为逆位
     const reversed = Math.random() < 0.3
-    dealtCards.value[i].reversed = reversed
-    dealtCards.value[i].isRevealed = true // 翻转显示正面
+    if (dealtCards.value && Array.isArray(dealtCards.value) && i < dealtCards.value.length && dealtCards.value[i]) {
+      // 使用可选链操作符确保对象存在
+      dealtCards.value[i]!.reversed = reversed
+      dealtCards.value[i]!.isRevealed = true // 翻转显示正面
+    }
     await flipCardAnimation(i)
     await new Promise(resolve => setTimeout(resolve, 800 * currentSpeed.value)) // 增加翻牌间隔
   }
@@ -377,13 +391,13 @@ const startDeal = async () => {
   // 完成前的停顿，让用户看清楚结果
   await new Promise(resolve => setTimeout(resolve, 2000 * currentSpeed.value))
   
-  const cardResults = dealtCards.value.map(card => ({
+  const cardResults = dealtCards.value && dealtCards.value.length > 0 ? dealtCards.value.map(card => ({
     number: card.number,
     suit: card.suit,
     name: card.name,
-    meaning: card.reversed ? card.reversed : card.meaning,
+    meaning: card.reversed ? "逆位" : card.meaning,
     reversed: card.reversed
-  }))
+  })) : []
   
   emit('complete', cardResults)
 }

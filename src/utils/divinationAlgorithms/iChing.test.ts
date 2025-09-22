@@ -26,7 +26,7 @@ describe('易经算卦算法测试', () => {
 
   // 测试卦象生成正确性
   test('易经卦象生成正确性测试', () => {
-    const result = performIChingDivination("我今天的运势如何？");
+    const result = performIChingDivination();
     
     // 检查返回结构
     expect(result).toHaveProperty('hexagram');
@@ -55,7 +55,7 @@ describe('易经算卦算法测试', () => {
 
   // 测试解释功能
   test('易经解释功能测试', () => {
-    const result = performIChingDivination("我应该换工作吗？");
+    const result = performIChingDivination();
     
     // 检查解释是否包含必要的信息
     expect(result.interpretation).toContain('您得到的是第');
@@ -89,11 +89,6 @@ describe('易经算卦算法测试', () => {
     // 测试不传参数的情况
     expect(() => {
       performIChingDivination();
-    }).not.toThrow();
-    
-    // 测试传入问题参数的情况
-    expect(() => {
-      performIChingDivination("这是一个测试问题");
     }).not.toThrow();
   });
 });

@@ -98,8 +98,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { gsap } from 'gsap'
+import { ref, computed, onUnmounted } from 'vue'
 import { performQianShiDivination } from '../utils/divinationAlgorithms/qianShi'
 
 const emit = defineEmits<{

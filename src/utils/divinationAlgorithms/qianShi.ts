@@ -713,26 +713,43 @@ const qianShiPoems: QianShiPoem[] = [
   ];
   
   // 验证签诗数据完整性
-  const validateQianShiData = (): boolean => {
-    // 检查是否有一百首签诗
-    if (qianShiPoems.length !== 100) {
-      console.error(`签诗数据不完整，期望100首，实际${qianShiPoems.length}首`);
+export const validateQianShiData = (): boolean => {
+  // 检查是否有签诗数据
+  if (!qianShiPoems || qianShiPoems.length === 0) {
+    console.error("签诗数据为空");
+    return false;
+  }
+  
+  // 检查是否有一百首签诗
+  if (qianShiPoems.length !== 100) {
+    console.error(`签诗数据不完整，期望100首，实际${qianShiPoems.length}首`);
+    return false;
+  }
+  
+  // 检查每首签诗的完整性
+  for (let i = 0; i < qianShiPoems.length; i++) {
+    const poem = qianShiPoems[i];
+    if (!poem) {
+      console.error(`第${i + 1}首签诗数据不存在`);
       return false;
     }
     
-    // 检查每首签诗的编号是否连续且正确
-    for (let i = 0; i < qianShiPoems.length; i++) {
-      if (qianShiPoems[i].number !== i + 1) {
-        console.error(`签诗编号错误：第${i + 1}首签诗编号为${qianShiPoems[i].number}`);
-        return false;
-      }
+    if (poem.number !== i + 1) {
+      console.error(`签诗编号错误：第${i + 1}首签诗编号为${poem.number}`);
+      return false;
     }
     
-    return true;
-  };
+    if (!poem.title || !poem.content || !poem.explanation || !poem.meaning) {
+      console.error(`第${i + 1}首签诗数据不完整`);
+      return false;
+    }
+  }
+  
+  return true;
+};
   
   // 主要的签诗算卦函数
-  export const performQianShiDivination = (question?: string): {
+  export const performQianShiDivination = (): {
     poem: QianShiPoem,
     interpretation: string
   } => {
@@ -744,6 +761,11 @@ const qianShiPoems: QianShiPoem[] = [
     // 随机选择一首签诗
     const randomIndex = Math.floor(Math.random() * qianShiPoems.length);
     const selectedPoem = qianShiPoems[randomIndex];
+    
+    // 确保selectedPoem存在
+    if (!selectedPoem) {
+      throw new Error("无法选择签诗，请重试");
+    }
     
     // 生成解释
     let interpretation = `您抽到的是${selectedPoem.title}：\n\n`;

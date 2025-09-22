@@ -26,7 +26,7 @@
         </div>
         
         <div class="yao-progress">
-          <div class="yao-indicator" v-for="(yao, idx) in 6" :key="idx">
+          <div class="yao-indicator" v-for="(_, idx) in 6" :key="idx">
             <div class="yao-dot" :class="{ 
               'completed': idx < currentYao, 
               'current': idx === currentYao,
@@ -81,7 +81,6 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { gsap } from 'gsap'
 
 interface Coin {
   side: 'front' | 'back'
@@ -256,7 +255,11 @@ const calculateHexagram = () => {
   // 计算卦象编号
   let binary = ""
   for (let i = 5; i >= 0; i--) {
-    binary += yaoResults.value[i].type === 'yang' ? "1" : "0"
+    if (yaoResults.value && Array.isArray(yaoResults.value) && i < yaoResults.value.length && yaoResults.value[i]) {
+      binary += yaoResults.value[i]!.type === 'yang' ? "1" : "0"
+    } else {
+      binary += "0" // 如果yaoResults[i]不存在，默认为阴爻
+    }
   }
   
   hexagramNumber.value = parseInt(binary, 2) + 1

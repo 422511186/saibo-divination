@@ -60,7 +60,7 @@ const emit = defineEmits<{
   (e: 'complete', cards: {number: number, suit: number}[]): void
 }>()
 
-const cardCount = props.cardCount || 3
+const cardCount = ref(props.cardCount || 3)
 const isDealing = ref(false)
 const dealtCards = ref<Card[]>([])
 const currentDealStep = ref(0)
@@ -151,7 +151,7 @@ const startDeal = () => {
   // 随机洗牌
   for (let i = cards.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [cards[i], cards[j]] = [cards[j], cards[i]]
+    [cards[i], cards[j]] = [cards[j]!, cards[i]!]
   }
   
   // 保存洗好的牌
@@ -182,10 +182,13 @@ const dealCards = () => {
       const card = allCards.value[i]
       
       // 更新显示的牌
-      dealtCards.value[i] = {
-        ...card,
-        isDealt: true,
-        isRevealed: false
+      if (card) {
+        dealtCards.value[i] = {
+          number: card.number,
+          suit: card.suit,
+          isDealt: true,
+          isRevealed: false
+        }
       }
       
       currentDealStep.value = i + 1
@@ -197,7 +200,7 @@ const dealCards = () => {
         
         const cardElements = cardsContainer.value.querySelectorAll('.tarot-card')
         if (cardElements[i]) {
-          gsap.fromTo(cardElements[i], 
+          gsap.fromTo(cardElements[i] as any, 
             { 
               x: 0, 
               y: 0, 
@@ -228,13 +231,15 @@ const dealCards = () => {
     
     // 逐张翻牌
     for (let i = 0; i < cardCount.value; i++) {
-      dealtCards.value[i].isRevealed = true
+      if (dealtCards.value && Array.isArray(dealtCards.value) && i < dealtCards.value.length && dealtCards.value[i]) {
+        dealtCards.value[i]!.isRevealed = true
+      }
       
       // 翻牌动画
       if (cardsContainer.value) {
         const cardElements = cardsContainer.value.querySelectorAll('.tarot-card')
         if (cardElements[i]) {
-          gsap.to(cardElements[i], {
+          gsap.to(cardElements[i] as any, {
             rotationY: 180,
             duration: 0.6
           })
