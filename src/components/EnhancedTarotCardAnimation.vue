@@ -337,12 +337,20 @@ const startDeal = async () => {
   
   allCards.value = shuffledCards
   
-  // 初始化要抽取的牌
-  dealtCards.value = Array(cardCount.value).fill(null).map((_, i) => ({
-    number: shuffledCards[i]?.number || 0,
-    suit: (shuffledCards[i] as any)?.suit !== undefined ? (shuffledCards[i] as any)?.suit : -1, // 默认为大阿卡纳
-    name: shuffledCards[i]?.name || "",
-    meaning: shuffledCards[i]?.meaning || "",
+  // 初始化要抽取的牌 - 从洗好的牌中随机抽取，而不是按顺序取
+  const selectedIndices: number[] = []
+  while (selectedIndices.length < cardCount.value) {
+    const randomIndex = Math.floor(Math.random() * shuffledCards.length)
+    if (!selectedIndices.includes(randomIndex)) {
+      selectedIndices.push(randomIndex)
+    }
+  }
+  
+  dealtCards.value = selectedIndices.map((index, i) => ({
+    number: shuffledCards[index]?.number || 0,
+    suit: (shuffledCards[index] as any)?.suit !== undefined ? (shuffledCards[index] as any)?.suit : -1, // 默认为大阿卡纳
+    name: shuffledCards[index]?.name || "",
+    meaning: shuffledCards[index]?.meaning || "",
     isDealt: false,
     isRevealed: false
   }))
@@ -352,8 +360,8 @@ const startDeal = async () => {
   
   // 逐张抽牌
   for (let i = 0; i < cardCount.value; i++) {
-    // 从洗好的牌中取出一张
-    const card = allCards.value[i]
+    // 从已选择的牌中取出一张
+    const card = dealtCards.value[i]
     
     dealtCards.value[i] = {
       number: card?.number || 0,
@@ -391,13 +399,17 @@ const startDeal = async () => {
   // 完成前的停顿，让用户看清楚结果
   await new Promise(resolve => setTimeout(resolve, 2000 * currentSpeed.value))
   
-  const cardResults = dealtCards.value && dealtCards.value.length > 0 ? dealtCards.value.map(card => ({
-    number: card.number,
-    suit: card.suit,
-    name: card.name,
-    meaning: card.reversed ? "逆位" : card.meaning,
-    reversed: card.reversed
-  })) : []
+  const cardResults = dealtCards.value && dealtCards.value.length > 0 ? dealtCards.value.map(card => {
+    // 查找原始卡牌数据
+    const originalCard = allTarotCards.find(c => c.number === card.number);
+    return {
+      number: card.number,
+      suit: card.suit,
+      name: card.name,
+      meaning: card.reversed ? (originalCard?.reversed || "逆位含义未知") : (originalCard?.meaning || card.meaning),
+      reversed: card.reversed
+    };
+  }) : []
   
   emit('complete', cardResults)
 }

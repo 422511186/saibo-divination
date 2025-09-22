@@ -1061,3 +1061,19 @@ export function getLineInterpretation(number: number, lineIndex: number): string
   
   return hexagram.lines[lineIndex];
 }
+
+// 获取爻辞内容（不包含爻位名称）
+export function getLineInterpretationContent(number: number, lineIndex: number): string {
+  const hexagram = getHexagramByNumber(number);
+  if (!hexagram || !hexagram.lines[lineIndex]) return "未找到对应的爻辞信息。";
+  
+  const line = hexagram.lines[lineIndex];
+  const colonIndex = line.indexOf('：');
+  
+  // 如果找到冒号，返回冒号后的内容；否则返回整行
+  if (colonIndex > 0) {
+    return line.substring(colonIndex + 1);
+  }
+  
+  return line;
+}

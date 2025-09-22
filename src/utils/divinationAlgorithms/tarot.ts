@@ -144,7 +144,19 @@ const interpretCards = (cards: any[], question?: string): string => {
   cards.forEach((card, index) => {
     const position = getPositionMeaning(index, cards.length)
     interpretation += `${position}: ${card.name}${card.reversed ? ' (逆位)' : ''}\n`
-    interpretation += `含义: ${card.reversed ? card.reversed : card.meaning}\n\n`
+    
+    // 获取正确的含义
+    let meaning = ""
+    if (card.reversed) {
+      // 查找原始卡牌数据中的逆位含义
+      const originalCard = allTarotCards.find(c => c.number === card.number)
+      meaning = originalCard?.reversed || "逆位含义未知"
+    } else {
+      // 使用正位含义
+      meaning = card.meaning || "含义未知"
+    }
+    
+    interpretation += `含义: ${meaning}\n\n`
   })
   
   return interpretation

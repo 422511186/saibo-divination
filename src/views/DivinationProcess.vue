@@ -86,7 +86,8 @@ import PlumFlowerAnimation from '../components/PlumFlowerAnimation.vue'
 import IChingAnimation from "@/components/IChingAnimation.vue";
 import { performIChingDivination } from '../utils/divinationAlgorithms/iChing'
 import { performQianShiDivination } from '../utils/divinationAlgorithms/qianShi'
-import { allTarotCards } from '../utils/divinationAlgorithms/tarot'
+import { allTarotCards, performTarotDivination } from '../utils/divinationAlgorithms/tarot'
+import { getHexagramByNumber } from '../data/hexagrams'
 
 const route = useRoute()
 const router = useRouter()
@@ -153,9 +154,23 @@ const onTarotComplete = (cards: any[]) => {
     cards: cards
   }
 
-  // 保存塔罗牌详细信息
+  // 保存塔罗牌详细信息，包括解读
+  // 使用从动画组件接收到的cards数据，而不是重新生成
+  const tarotResult = performTarotDivination(userQuestion.value, 'three');
+  
+  // 更新cards数据，确保逆位含义正确
+  const updatedCards = cards.map(card => {
+    // 查找原始卡牌数据
+    const originalCard = allTarotCards.find(c => c.number === card.number);
+    return {
+      ...card,
+      meaning: card.reversed ? (originalCard?.reversed || "逆位含义未知") : (originalCard?.meaning || card.meaning)
+    };
+  });
+  
   divinationDetails.value = {
-    cardDetails: cards
+    cards: updatedCards,
+    interpretation: tarotResult.interpretation
   }
 
   setTimeout(() => {
@@ -183,11 +198,13 @@ const onIChingComplete = (result: { yao: number[], changingLines: boolean[], hex
   }
 
   // 保存详细信息，包括完整的卦象数据
-  const fullResult = performIChingDivination();
+  // 使用从动画组件接收到的结果，而不是重新生成
+  const hexagramData = getHexagramByNumber(result.hexagramNumber);
+  
   divinationDetails.value = {
     yao: result.yao,
     changingLines: result.changingLines,
-    hexagramData: fullResult.hexagram
+    hexagramData: hexagramData
   }
 
   setTimeout(() => {
@@ -212,21 +229,37 @@ const onQianShiComplete = (qianNumber: number) => {
 }
 
 const onPlumFlowerComplete = (result: { upperYao: number[], lowerYao: number[], hexagramNumber: number }) => {
-  divinationResult.value = {
-    upperYao: result.upperYao,
-    lowerYao: result.lowerYao,
-    hexagram: result.hexagramNumber
-  }
+  // 导入梅花易数算法
+  import('@/utils/divinationAlgorithms/plumFlower').then(({ performPlumFlowerDivination }) => {
+    // 使用实际输入的数字重新计算完整结果
+    const firstNumber = result.upperYao[0] === 1 ? 3 : 1 + 
+                       (result.upperYao[1] === 1 ? 30 : 10) + 
+                       (result.upperYao[2] === 1 ? 300 : 100)
+    const secondNumber = result.lowerYao[0] === 1 ? 3 : 1 + 
+                        (result.lowerYao[1] === 1 ? 30 : 10) + 
+                        (result.lowerYao[2] === 1 ? 300 : 100)
+    
+    const plumFlowerResult = performPlumFlowerDivination(firstNumber, secondNumber)
+    
+    divinationResult.value = {
+      upperYao: result.upperYao,
+      lowerYao: result.lowerYao,
+      hexagram: result.hexagramNumber
+    }
 
-  // 保存梅花易数详细信息
-  divinationDetails.value = {
-    upperYao: result.upperYao,
-    lowerYao: result.lowerYao
-  }
+    // 保存梅花易数详细信息，包括卦象名称、图像和解读
+    divinationDetails.value = {
+      upperYao: result.upperYao,
+      lowerYao: result.lowerYao,
+      hexagramName: plumFlowerResult.hexagramName,
+      hexagramImage: plumFlowerResult.hexagramImage,
+      interpretation: plumFlowerResult.interpretation
+    }
 
-  setTimeout(() => {
-    completeDivination()
-  }, 2000)
+    setTimeout(() => {
+      completeDivination()
+    }, 2000)
+  })
 }
 
 const completeDivination = () => {
@@ -236,12 +269,35 @@ const completeDivination = () => {
     return
   }
 
+  // 确保塔罗牌结果有正确的逆位含义
+  let finalResult = divinationResult.value;
+  if (typeId.value === 'tarot' && divinationDetails.value && divinationDetails.value.cards) {
+    // 使用已经处理过的卡牌数据
+    finalResult = {
+      cards: divinationDetails.value.cards
+    };
+  } else if (!divinationResult.value) {
+    // 如果没有结果，生成新的结果
+    finalResult = generateResult(typeId.value);
+    
+    // 如果是塔罗牌，确保逆位含义正确
+    if (typeId.value === 'tarot' && finalResult.cards) {
+      finalResult.cards = finalResult.cards.map((card: any) => {
+        const originalCard = allTarotCards.find(c => c.number === card.number);
+        return {
+          ...card,
+          meaning: card.reversed ? (originalCard?.reversed || "逆位含义未知") : (originalCard?.meaning || card.meaning)
+        };
+      });
+    }
+  }
+
   // 生成模拟结果
   const result = {
     id: Date.now().toString(),
     type: typeId.value,
     question: userQuestion.value,
-    result: divinationResult.value || generateResult(typeId.value),
+    result: finalResult,
     timestamp: Date.now(),
     interpretation: generateInterpretation() || '',
     details: divinationDetails.value || {}
@@ -282,10 +338,17 @@ const generateResult = (type: string) => {
       // 梅花易数结果
       const upperYao = Array.from({length: 3}, () => Math.floor(Math.random() * 2))
       const lowerYao = Array.from({length: 3}, () => Math.floor(Math.random() * 2))
+      
+      // 计算卦象编号
+      const upperBinary = upperYao.map(y => y.toString()).join('')
+      const lowerBinary = lowerYao.map(y => y.toString()).join('')
+      const hexagramBinary = upperBinary + lowerBinary
+      const hexagramNumber = parseInt(hexagramBinary, 2) + 1
+      
       return {
         upperYao,
         lowerYao,
-        hexagram: Math.floor(Math.random() * 64) + 1
+        hexagram: hexagramNumber
       }
     default:
       return {data: 'result'}

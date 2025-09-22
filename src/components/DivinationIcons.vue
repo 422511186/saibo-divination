@@ -251,24 +251,24 @@ const numberExamples = ref([
 </script>
 
 <style scoped lang="scss">
-@import '../styles/variables.scss';
+@use '@/styles/variables.scss';
 
 .divination-icons {
   margin-top: 2rem;
   padding: 1.5rem;
-  background: rgba($cyber-panel, 0.5);
+  background: rgba(variables.$cyber-panel, 0.5);
   border-radius: 15px;
-  border: 1px solid rgba($neon-blue, 0.3);
+  border: 1px solid rgba(variables.$neon-blue, 0.3);
   animation: fadeIn 1s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
   animation-delay: 1.8s;
   opacity: 0;
   will-change: transform, opacity;
 
   h3, h4, h5 {
-    color: $neon-blue;
+    color: variables.$neon-blue;
     text-align: center;
     margin-bottom: 1rem;
-    text-shadow: 0 0 8px rgba($neon-blue, 0.5);
+    text-shadow: 0 0 8px rgba(variables.$neon-blue, 0.5);
   }
 
   h3 {
@@ -285,7 +285,7 @@ const numberExamples = ref([
   h5 {
     font-size: 1.2rem;
     margin-bottom: 0.8rem;
-    color: $neon-purple;
+    color: variables.$neon-purple;
   }
 
   .icons-container {
@@ -304,8 +304,8 @@ const numberExamples = ref([
 
     .icon-item {
       .icon-card {
-        background: rgba($cyber-dark, 0.7);
-        border: 1px solid rgba($neon-purple, 0.5);
+        background: rgba(variables.$cyber-dark, 0.7);
+        border: 1px solid rgba(variables.$neon-purple, 0.5);
         border-radius: 10px;
         padding: 1rem;
         text-align: center;
@@ -317,27 +317,27 @@ const numberExamples = ref([
 
         &:hover {
           transform: translateY(-5px);
-          box-shadow: 0 5px 15px rgba($neon-purple, 0.3);
-          border-color: $neon-purple;
+          box-shadow: 0 5px 15px rgba(variables.$neon-purple, 0.3);
+          border-color: variables.$neon-purple;
         }
 
         .icon-number {
           font-size: 1.5rem;
           font-weight: bold;
-          color: $neon-pink;
+          color: variables.$neon-pink;
           margin-bottom: 0.5rem;
         }
 
         .icon-name {
           font-size: 1.1rem;
           font-weight: bold;
-          color: $neon-blue;
+          color: variables.$neon-blue;
           margin-bottom: 0.5rem;
         }
 
         .icon-meaning {
           font-size: 0.9rem;
-          color: $text-primary;
+          color: variables.$text-primary;
         }
       }
 
@@ -376,8 +376,8 @@ const numberExamples = ref([
 
     .bagua-item {
       .bagua-card {
-        background: rgba($cyber-dark, 0.7);
-        border: 1px solid rgba($neon-blue, 0.5);
+        background: rgba(variables.$cyber-dark, 0.7);
+        border: 1px solid rgba(variables.$neon-blue, 0.5);
         border-radius: 10px;
         padding: 1rem;
         text-align: center;
@@ -389,26 +389,26 @@ const numberExamples = ref([
 
         &:hover {
           transform: translateY(-5px);
-          box-shadow: 0 5px 15px rgba($neon-blue, 0.3);
-          border-color: $neon-blue;
+          box-shadow: 0 5px 15px rgba(variables.$neon-blue, 0.3);
+          border-color: variables.$neon-blue;
         }
 
         .bagua-symbol {
           font-size: 2.5rem;
           margin-bottom: 0.5rem;
-          color: $neon-yellow;
+          color: variables.$neon-yellow;
         }
 
         .bagua-name {
           font-size: 1.2rem;
           font-weight: bold;
-          color: $neon-blue;
+          color: variables.$neon-blue;
           margin-bottom: 0.5rem;
         }
 
         .bagua-meaning {
           font-size: 0.9rem;
-          color: $text-primary;
+          color: variables.$text-primary;
         }
       }
     }
@@ -422,8 +422,8 @@ const numberExamples = ref([
 
       .hexagram-item {
         .hexagram-card {
-          background: rgba($cyber-dark, 0.7);
-          border: 1px solid rgba($neon-blue, 0.5);
+          background: rgba(variables.$cyber-dark, 0.7);
+          border: 1px solid rgba(variables.$neon-blue, 0.5);
           border-radius: 10px;
           padding: 1rem;
           text-align: center;
@@ -435,26 +435,26 @@ const numberExamples = ref([
 
           &:hover {
             transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba($neon-blue, 0.3);
-            border-color: $neon-blue;
+            box-shadow: 0 5px 15px rgba(variables.$neon-blue, 0.3);
+            border-color: variables.$neon-blue;
           }
 
           .hexagram-symbol {
             font-size: 2rem;
             margin-bottom: 0.5rem;
-            color: $neon-yellow;
+            color: variables.$neon-yellow;
           }
 
           .hexagram-name {
             font-size: 1.1rem;
             font-weight: bold;
-            color: $neon-blue;
+            color: variables.$neon-blue;
             margin-bottom: 0.3rem;
           }
 
           .hexagram-number {
             font-size: 0.9rem;
-            color: $neon-purple;
+            color: variables.$neon-purple;
           }
         }
       }
@@ -519,7 +519,7 @@ const numberExamples = ref([
 
       .qiantong-description {
         flex: 1;
-        color: $text-primary;
+        color: variables.$text-primary;
         line-height: 1.6;
 
         p {
@@ -537,8 +537,8 @@ const numberExamples = ref([
 
       .qian-item {
         .qian-card {
-          background: rgba($cyber-dark, 0.7);
-          border: 1px solid rgba($neon-blue, 0.5);
+          background: rgba(variables.$cyber-dark, 0.7);
+          border: 1px solid rgba(variables.$neon-blue, 0.5);
           border-radius: 10px;
           padding: 1rem;
           transition: all 0.3s ease;
@@ -549,27 +549,27 @@ const numberExamples = ref([
 
           &:hover {
             transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba($neon-blue, 0.3);
-            border-color: $neon-blue;
+            box-shadow: 0 5px 15px rgba(variables.$neon-blue, 0.3);
+            border-color: variables.$neon-blue;
           }
 
           .qian-number {
             font-size: 1.1rem;
             font-weight: bold;
-            color: $neon-purple;
+            color: variables.$neon-purple;
             margin-bottom: 0.5rem;
           }
 
           .qian-title {
             font-size: 1.2rem;
             font-weight: bold;
-            color: $neon-blue;
+            color: variables.$neon-blue;
             margin-bottom: 0.5rem;
           }
 
           .qian-content {
             font-size: 0.9rem;
-            color: $text-primary;
+            color: variables.$text-primary;
             font-style: italic;
           }
         }
@@ -634,7 +634,7 @@ const numberExamples = ref([
 
       .plumflower-description {
         flex: 1;
-        color: $text-primary;
+        color: variables.$text-primary;
         line-height: 1.6;
 
         p {
@@ -652,8 +652,8 @@ const numberExamples = ref([
 
       .number-item {
         .number-card {
-          background: rgba($cyber-dark, 0.7);
-          border: 1px solid rgba($neon-blue, 0.5);
+          background: rgba(variables.$cyber-dark, 0.7);
+          border: 1px solid rgba(variables.$neon-blue, 0.5);
           border-radius: 10px;
           padding: 1rem;
           text-align: center;
@@ -665,26 +665,26 @@ const numberExamples = ref([
 
           &:hover {
             transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba($neon-blue, 0.3);
-            border-color: $neon-blue;
+            box-shadow: 0 5px 15px rgba(variables.$neon-blue, 0.3);
+            border-color: variables.$neon-blue;
           }
 
           .number-value {
             font-size: 1.5rem;
             font-weight: bold;
-            color: $neon-pink;
+            color: variables.$neon-pink;
             margin-bottom: 0.5rem;
           }
 
           .number-trigram {
             font-size: 2rem;
             margin-bottom: 0.5rem;
-            color: $neon-yellow;
+            color: variables.$neon-yellow;
           }
 
           .number-meaning {
             font-size: 0.9rem;
-            color: $text-primary;
+            color: variables.$text-primary;
           }
         }
       }

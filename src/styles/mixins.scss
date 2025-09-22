@@ -1,5 +1,7 @@
 // 赛博朋克风格混入
 
+@use 'sass:color';
+
 // 霓虹发光效果
 @mixin neon-glow($color: #bc13fe, $intensity: 15px) {
   box-shadow: 0 0 $intensity rgba($color, 0.7);
@@ -13,7 +15,7 @@
 
 // 赛博朋克按钮样式
 @mixin cyber-button($bg-color: #bc13fe, $text-color: #0c0c14) {
-  background: linear-gradient(90deg, $bg-color, lighten($bg-color, 10%));
+  background: linear-gradient(90deg, $bg-color, color.scale($bg-color, $lightness: 10%));
   color: $text-color;
   border: none;
   border-radius: 30px;
