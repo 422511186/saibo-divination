@@ -9,5 +9,6 @@ export default defineConfig({
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
-  }
+  },
+  base: './' // 添加相对路径配置，使资源路径在Docker环境中正确加载
 })
